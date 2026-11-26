@@ -229,8 +229,9 @@
     save();
     render();
     // The button that was just used is gone, so park focus on what came back — but
-    // never pull it out of the search box or the sort menu.
-    if (!focusIsElsewhere() && !focusTodo(firstRestored)) input.focus();
+    // never pull it out of the search box, the sort menu, or an edit in progress
+    // (render() has already put it back where the user was typing).
+    if (!editingId && !focusIsElsewhere() && !focusTodo(firstRestored)) input.focus();
   }
 
   /* ---------- search ---------- */
