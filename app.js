@@ -51,10 +51,15 @@
     return typeof value === 'number' && isFinite(value) && value > 0;
   }
 
-  // Todos saved before timestamps existed had ids starting with a base-36
-  // Date.now(), so their creation time can still be recovered from the id.
+  // Todos saved before timestamps existed were given ids of the form
+  // Date.now().toString(36) + five random base-36 chars, so their creation time
+  // can still be recovered from the id prefix. Unknown ids return 0 and fall back
+  // to insertion order when sorting.
   function legacyTime(id) {
-    var stamped = parseInt(id, 36);
+    if (id.length <= 5) return 0;
+    var prefix = id.slice(0, -5);
+    if (!/^[0-9a-z]+$/.test(prefix)) return 0;
+    var stamped = parseInt(prefix, 36);
     return isFinite(stamped) && stamped > 0 ? stamped : 0;
   }
 
