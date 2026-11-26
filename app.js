@@ -16,6 +16,7 @@
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
+  var clearCompletedBtn = document.getElementById('clear-completed');
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
@@ -158,6 +159,17 @@
   function stopEditing() {
     editingId = null;
     editDraft = null;
+  }
+
+  // Drops every completed todo at once; undone todos keep their place and order.
+  function clearCompleted() {
+    todos = todos.filter(function (todo) {
+      return !todo.done;
+    });
+    // The row being edited may have just been removed with the rest.
+    if (editingId && !find(editingId)) stopEditing();
+    save();
+    render();
   }
 
   /* ---------- search ---------- */
