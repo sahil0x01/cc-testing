@@ -2,6 +2,11 @@
 
 A basic client-side todo app: plain HTML, CSS and JavaScript with no build step or dependencies.
 
+The interface is deliberately pixelated: square corners, chunky 3px borders, hard offset
+shadows, a dithered checkerboard background, no font smoothing, and a hand-plotted 5x5
+pixel checkbox tick. All of it is CSS plus one tiny inline SVG, so there are no webfonts
+or image files to load.
+
 ## Run
 
 Open `index.html` in a browser, or serve the folder:
