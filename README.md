@@ -27,3 +27,8 @@ python3 -m http.server 8000   # then visit http://localhost:8000
   it, Escape in the box does the same, and the status line reports how many rows
   are showing. Adding a todo that does not match the active filter clears the
   filter so the new row is never invisible.
+- Sort: the Sort menu orders the list by creation date (newest or oldest first)
+  or last-updated date (newest or oldest first). Every todo stores when it was
+  created and when it was last changed (text edits and done/undone toggles bump
+  the updated time), the choice is remembered in `localStorage`, and the sort is
+  display-only: the saved data keeps insertion order.
