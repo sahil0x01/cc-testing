@@ -233,21 +233,26 @@
     return sort.indexOf('-desc') !== -1 ? -1 : 1;
   }
 
-  // Ties fall back to the id so rows with identical timestamps keep a stable
-  // order instead of swapping places between renders.
-  function compareTodos(a, b) {
+  // Ties fall back to insertion order, so rows with identical (or unknown, for
+  // todos saved before timestamps existed) timestamps never swap places.
+  function compareEntries(a, b) {
     var field = sortField();
-    var diff = a[field] - b[field];
-    if (diff === 0) {
-      diff = a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
-    }
+    var diff = a.todo[field] - b.todo[field];
+    if (diff === 0) return a.index - b.index;
     return diff * sortDirection();
   }
 
   // A sorted copy: the stored array keeps insertion order, so only the rendered
   // order depends on the current sort mode.
   function sortedTodos() {
-    return todos.slice().sort(compareTodos);
+    return todos
+      .map(function (todo, index) {
+        return { todo: todo, index: index };
+      })
+      .sort(compareEntries)
+      .map(function (entry) {
+        return entry.todo;
+      });
   }
 
   function setSort(value) {
