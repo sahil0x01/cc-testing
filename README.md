@@ -20,7 +20,9 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 - Create: type in the input and press Add (or Enter)
 - Read: the list is rendered from `localStorage`, so todos survive reloads
 - Update: check the box to toggle done, or use Edit (Enter saves, Escape cancels)
-- Delete: the Delete button on each row
+- Delete: the Delete button on each row, or Clear completed to drop every
+  finished todo at once (the button only appears when something is completed;
+  open todos are untouched, including any filter you have typed)
 - Search: the search box filters the list by text as you type (case-insensitive
   substring match). Rows are hidden in place rather than re-rendered, so typing a
   query never disturbs an edit in progress or the focus in the box. Clear empties

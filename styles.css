@@ -282,6 +282,21 @@ h1 {
   letter-spacing: 0.04em;
 }
 
+/* Status line on the left, Clear completed on the right; it only shows when it can act. */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.footer .todo-count {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
 @media (max-width: 26rem) {
   body {
     padding: 1rem 0.5rem;
@@ -300,6 +315,7 @@ h1 {
 
   .search,
   .sort,
+  .footer,
   .todo,
   .todo-actions,
   .todo-edit {

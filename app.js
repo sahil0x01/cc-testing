@@ -228,6 +228,11 @@
 
     // Only offer Clear when the box holds something that actually filters.
     searchClear.hidden = !searching;
+
+    // Nothing to clear when every todo is still open (or there are none).
+    clearCompletedBtn.hidden = !todos.some(function (todo) {
+      return todo.done;
+    });
   }
 
   function setQuery(value) {
@@ -437,6 +442,10 @@
 
   sortSelect.addEventListener('change', function () {
     setSort(sortSelect.value);
+  });
+
+  clearCompletedBtn.addEventListener('click', function () {
+    clearCompleted();
   });
 
   // Reflect the stored sort mode in the select before the first render.
