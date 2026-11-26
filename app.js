@@ -16,6 +16,7 @@
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
+  var toggleAllBtn = document.getElementById('toggle-all');
   var clearCompletedBtn = document.getElementById('clear-completed');
 
   // The todo being edited, or null when no row is in edit mode.
@@ -144,6 +145,31 @@
     return todo;
   }
 
+  // True only when the list is non-empty and every todo is completed.
+  function allDone() {
+    return (
+      todos.length > 0 &&
+      todos.every(function (todo) {
+        return todo.done;
+      })
+    );
+  }
+
+  // One button flips the whole list: every open todo is completed, and once
+  // everything is done a second click reopens them all again.
+  function toggleAll() {
+    var done = !allDone();
+    var now = Date.now();
+    todos.forEach(function (todo) {
+      if (todo.done !== done) {
+        todo.done = done;
+        todo.updatedAt = now;
+      }
+    });
+    save();
+    render();
+  }
+
   function deleteTodo(id) {
     var todo = find(id);
     if (!todo) return null;
@@ -233,6 +259,15 @@
     clearCompletedBtn.hidden = !todos.some(function (todo) {
       return todo.done;
     });
+
+    // The bulk toggle needs at least one todo, and its label says which way the
+    // next click will flip the list.
+    var everythingDone = allDone();
+    toggleAllBtn.hidden = todos.length === 0;
+    toggleAllBtn.textContent = everythingDone ? 'Mark all not done' : 'Mark all done';
+    toggleAllBtn.title = everythingDone
+      ? 'Mark every todo as not done'
+      : 'Mark every todo as done';
   }
 
   function setQuery(value) {
@@ -442,6 +477,10 @@
 
   sortSelect.addEventListener('change', function () {
     setSort(sortSelect.value);
+  });
+
+  toggleAllBtn.addEventListener('click', function () {
+    toggleAll();
   });
 
   clearCompletedBtn.addEventListener('click', function () {
