@@ -268,9 +268,32 @@
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
-    addTodo(input.value);
+    var added = addTodo(input.value);
+    // Don't let a new todo vanish into an active filter the user forgot about.
+    if (added && !matchesQuery(added)) {
+      searchInput.value = '';
+      setQuery('');
+    }
     input.value = '';
     input.focus();
+  });
+
+  searchInput.addEventListener('input', function () {
+    setQuery(searchInput.value);
+  });
+
+  searchInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && searchInput.value !== '') {
+      event.preventDefault();
+      searchInput.value = '';
+      setQuery('');
+    }
+  });
+
+  searchClear.addEventListener('click', function () {
+    searchInput.value = '';
+    setQuery('');
+    searchInput.focus();
   });
 
   render();

@@ -70,8 +70,15 @@ h1 {
   margin-bottom: 1rem;
 }
 
+.search {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 .new-todo-input,
-.edit-input {
+.edit-input,
+.search-input {
   flex: 1;
   min-width: 0;
   padding: 0.6rem 0.7rem;
@@ -83,12 +90,26 @@ h1 {
   box-shadow: inset 3px 3px 0 rgba(27, 27, 47, 0.08);
 }
 
-.new-todo-input::placeholder {
+.new-todo-input::placeholder,
+.search-input::placeholder {
   color: var(--muted);
 }
 
+/* Keep the field square, and hide the browser's round clear icon: the app has its own. */
+.search-input {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-decoration {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 .new-todo-input:focus,
-.edit-input:focus {
+.edit-input:focus,
+.search-input:focus {
   outline: 3px solid var(--outline);
   outline-offset: 2px;
   background: #fff;
