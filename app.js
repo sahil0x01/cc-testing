@@ -273,10 +273,16 @@
     return button;
   }
 
+  // Timestamps are only shown as a native tooltip: the list itself stays plain.
+  function formatTime(ms) {
+    return ms > 0 ? new Date(ms).toLocaleString() : 'unknown';
+  }
+
   function renderItem(todo) {
     var item = document.createElement('li');
     item.className = 'todo' + (todo.done ? ' done' : '');
     item.dataset.id = todo.id;
+    item.title = 'Created ' + formatTime(todo.createdAt) + ' · Updated ' + formatTime(todo.updatedAt);
 
     if (editingId === todo.id) {
       var editRow = document.createElement('div');
