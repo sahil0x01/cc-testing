@@ -20,6 +20,11 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 - Create: type in the input and press Add (or Enter)
 - Read: the list is rendered from `localStorage`, so todos survive reloads
 - Update: check the box to toggle done, or use Edit (Enter saves, Escape cancels)
+- Bulk toggle: Mark all done completes every todo at once; once nothing is left
+  open the button reads Mark all not done and reopens them all instead. It always
+  acts on the whole list (an active search only hides rows, it never limits the
+  toggle), and its label states what the next click will do. It is hidden while
+  the list is empty.
 - Delete: the Delete button on each row, or Clear completed to drop every
   finished todo at once. The button only appears when something is completed,
   never touches open todos, and leaves an active search untouched
