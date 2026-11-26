@@ -21,6 +21,18 @@
         <button type="submit" class="btn btn-primary">Add</button>
       </form>
 
+      <div class="search">
+        <input
+          id="search-input"
+          class="search-input"
+          type="search"
+          placeholder="Search todos..."
+          aria-label="Search todos"
+          autocomplete="off"
+        />
+        <button type="button" id="search-clear" class="btn" hidden>Clear</button>
+      </div>
+
       <ul id="todo-list" class="todo-list"></ul>
       <p id="empty-state" class="empty-state">Nothing to do yet.</p>
       <p id="todo-count" class="todo-count"></p>

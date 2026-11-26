@@ -5,12 +5,18 @@
 
   var form = document.getElementById('new-todo-form');
   var input = document.getElementById('new-todo-input');
+  var searchInput = document.getElementById('search-input');
+  var searchClear = document.getElementById('search-clear');
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
+  // Unsaved edit text, kept across re-renders (searching re-renders on every keypress).
+  var editDraft = null;
+  // Raw search box value; empty means "show everything".
+  var query = '';
   var todos = load();
 
   /* ---------- storage ---------- */
