@@ -94,10 +94,36 @@
     todos = todos.filter(function (item) {
       return item.id !== id;
     });
-    if (editingId === id) editingId = null;
+    if (editingId === id) stopEditing();
     save();
     render();
     return todo;
+  }
+
+  function stopEditing() {
+    editingId = null;
+    editDraft = null;
+  }
+
+  /* ---------- search ---------- */
+
+  function searchTerm() {
+    return query.trim().toLowerCase();
+  }
+
+  function matchesQuery(todo) {
+    var needle = searchTerm();
+    if (!needle) return true;
+    return todo.text.toLowerCase().indexOf(needle) !== -1;
+  }
+
+  function visibleTodos() {
+    return todos.filter(matchesQuery);
+  }
+
+  function setQuery(value) {
+    query = String(value == null ? '' : value);
+    render();
   }
 
   /* ---------- rendering ---------- */
@@ -123,14 +149,17 @@
       var editInput = document.createElement('input');
       editInput.type = 'text';
       editInput.className = 'edit-input';
-      editInput.value = todo.text;
+      editInput.value = editDraft === null ? todo.text : editDraft;
       editInput.setAttribute('aria-label', 'Edit todo');
+      editInput.addEventListener('input', function () {
+        editDraft = editInput.value;
+      });
       editInput.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
           event.preventDefault();
           commitEdit(todo.id, editInput.value);
         } else if (event.key === 'Escape') {
-          editingId = null;
+          stopEditing();
           render();
         }
       });
@@ -143,7 +172,7 @@
       );
       editRow.appendChild(
         makeButton('Cancel', 'btn', function () {
-          editingId = null;
+          stopEditing();
           render();
         })
       );
@@ -169,6 +198,7 @@
     actions.appendChild(
       makeButton('Edit', 'btn', function () {
         editingId = todo.id;
+        editDraft = null;
         render();
       })
     );
@@ -185,21 +215,42 @@
   }
 
   function render() {
+    var searching = searchTerm() !== '';
+    var visible = visibleTodos();
+
+    // Drop edit mode if the row being edited no longer passes the filter.
+    if (editingId && !visible.some(function (todo) { return todo.id === editingId; })) {
+      stopEditing();
+    }
+
     list.textContent = '';
-    todos.forEach(function (todo) {
+    visible.forEach(function (todo) {
       list.appendChild(renderItem(todo));
     });
 
-    emptyState.hidden = todos.length > 0;
+    emptyState.textContent = searching
+      ? 'No todos match "' + query.trim() + '".'
+      : 'Nothing to do yet.';
+    emptyState.hidden = visible.length > 0;
 
     var remaining = todos.filter(function (todo) {
       return !todo.done;
     }).length;
-    countEl.textContent = todos.length === 0 ? '' : remaining + ' of ' + todos.length + ' left';
+    if (todos.length === 0) {
+      countEl.textContent = '';
+    } else if (searching) {
+      countEl.textContent =
+        'Showing ' + visible.length + ' of ' + todos.length + ' · ' + remaining + ' of ' + todos.length + ' left';
+    } else {
+      countEl.textContent = remaining + ' of ' + todos.length + ' left';
+    }
+
+    searchClear.hidden = query === '';
 
     if (editingId) {
       var editInput = list.querySelector('.edit-input');
-      if (editInput) {
+      // Leave focus in the search box while the user is typing a query.
+      if (editInput && document.activeElement !== searchInput) {
         editInput.focus();
         editInput.select();
       }
@@ -207,14 +258,10 @@
   }
 
   function commitEdit(id, text) {
-    if (updateTodo(id, text)) {
-      editingId = null;
-      render();
-    } else {
-      // Empty input: keep the todo unchanged and leave edit mode.
-      editingId = null;
-      render();
-    }
+    // An empty input keeps the todo unchanged and just leaves edit mode.
+    updateTodo(id, text);
+    stopEditing();
+    render();
   }
 
   /* ---------- events ---------- */
