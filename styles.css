@@ -1,0 +1,318 @@
+:root {
+  --ink: #1b1b2f;
+  --paper: #f6f2e4;
+  --panel: #fffdf3;
+  --muted: #6f6b7d;
+  --accent: #3b5bdb;
+  --accent-dark: #2a44a8;
+  --danger: #b42318;
+  --outline: var(--accent);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Keep anything rasterised (and any future images) crunchy instead of smoothed. */
+  image-rendering: pixelated;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background-color: var(--paper);
+  /* 8px checkerboard dither, drawn with hard conic stops so the squares stay crisp. */
+  background-image: conic-gradient(
+    rgba(27, 27, 47, 0.06) 25%,
+    transparent 0 50%,
+    rgba(27, 27, 47, 0.06) 0 75%,
+    transparent 0
+  );
+  background-size: 16px 16px;
+  color: var(--ink);
+  font: 16px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+.app {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--ink);
+}
+
+h1 {
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 3px solid var(--ink);
+  font-size: 1.35rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 0 rgba(27, 27, 47, 0.18);
+}
+
+.new-todo {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.search,
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.sort-label {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sort-select {
+  flex: 1;
+  min-width: 0;
+  /* Hide the platform arrow so the menu keeps its square, hand-drawn edges. */
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0.6rem 2.4rem 0.6rem 0.7rem;
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background-color: var(--paper);
+  /* 7x4 pixel down-arrow, scaled 3x, matching --ink. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1h-7zM1 1h5v1h-5zM2 2h3v1h-3zM3 3h1v1h-1z' fill='%231b1b2f'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 21px 12px;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  box-shadow: inset 3px 3px 0 rgba(27, 27, 47, 0.08);
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+.sort-select:hover {
+  background-color: #e9e3d0;
+}
+
+.sort-select:focus {
+  outline: 3px solid var(--outline);
+  outline-offset: 2px;
+  background-color: #fff;
+}
+
+.new-todo-input,
+.edit-input,
+.search-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0.7rem;
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: inherit;
+  font: inherit;
+  box-shadow: inset 3px 3px 0 rgba(27, 27, 47, 0.08);
+}
+
+.new-todo-input::placeholder,
+.search-input::placeholder {
+  color: var(--muted);
+}
+
+/* Keep the field square, and hide the browser's round clear icon: the app has its own. */
+.search-input {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-decoration {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.new-todo-input:focus,
+.edit-input:focus,
+.search-input:focus {
+  outline: 3px solid var(--outline);
+  outline-offset: 2px;
+  background: #fff;
+}
+
+.btn {
+  padding: 0.55rem 0.9rem;
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--panel);
+  color: inherit;
+  font: inherit;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  /* Hard offset shadow plus a 1px hover nudge: buttons snap, they never glide. */
+  box-shadow: 4px 4px 0 var(--ink);
+  user-select: none;
+}
+
+.btn:hover {
+  background: #e9e3d0;
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.btn:focus-visible,
+.todo-checkbox:focus-visible {
+  outline: 3px solid var(--outline);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.btn-primary:hover {
+  background: var(--accent-dark);
+}
+
+.btn-danger {
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.todo-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
+  border-bottom: 3px dashed rgba(27, 27, 47, 0.28);
+}
+
+/* Set by applyFilter() on the last row that is currently visible. */
+.todo.is-last {
+  border-bottom: 0;
+}
+
+.todo-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 0 0 auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: 0;
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: inset 3px 3px 0 rgba(27, 27, 47, 0.1);
+  cursor: pointer;
+}
+
+/* The tick is a 5x5 pixel grid (fill matches --ink) scaled up 4x, so it stays blocky. */
+.todo-checkbox:checked {
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5' shape-rendering='crispEdges'%3E%3Cpath d='M4 0h1v1h-1zM3 1h1v1h-1zM4 1h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM0 3h3v1h-3zM0 4h2v1h-2z' fill='%231b1b2f'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px 20px;
+  image-rendering: pixelated;
+}
+
+.todo-text {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.todo.done .todo-text {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.todo-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.todo-edit {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+}
+
+.empty-state,
+.todo-count {
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 26rem) {
+  body {
+    padding: 1rem 0.5rem;
+  }
+
+  .app {
+    padding: 1rem;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+
+  .btn {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .search,
+  .sort,
+  .todo,
+  .todo-actions,
+  .todo-edit {
+    gap: 0.4rem;
+  }
+
+  .sort-select {
+    font-size: 0.75rem;
+    padding-right: 1.9rem;
+    background-position: right 0.4rem center;
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
