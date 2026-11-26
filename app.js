@@ -2,11 +2,17 @@
   'use strict';
 
   var STORAGE_KEY = 'todos';
+  var SORT_KEY = 'todos-sort';
+
+  // Every sort mode the select offers; anything else stored is ignored.
+  var SORT_MODES = ['created-asc', 'created-desc', 'updated-desc', 'updated-asc'];
+  var DEFAULT_SORT = 'created-asc';
 
   var form = document.getElementById('new-todo-form');
   var input = document.getElementById('new-todo-input');
   var searchInput = document.getElementById('search-input');
   var searchClear = document.getElementById('search-clear');
+  var sortSelect = document.getElementById('sort-select');
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');

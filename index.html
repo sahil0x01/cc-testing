@@ -33,6 +33,16 @@
         <button type="button" id="search-clear" class="btn" hidden>Clear</button>
       </div>
 
+      <div class="sort">
+        <label class="sort-label" for="sort-select">Sort</label>
+        <select id="sort-select" class="sort-select" aria-label="Sort todos">
+          <option value="created-asc" selected>Created · oldest</option>
+          <option value="created-desc">Created · newest</option>
+          <option value="updated-desc">Updated · newest</option>
+          <option value="updated-asc">Updated · oldest</option>
+        </select>
+      </div>
+
       <ul id="todo-list" class="todo-list"></ul>
       <p id="empty-state" class="empty-state">Nothing to do yet.</p>
       <p id="todo-count" class="todo-count"></p>
