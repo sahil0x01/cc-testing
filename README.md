@@ -1,4 +1,4 @@
-# Prefill Tasks
+# Prefill Todos
 
 A basic client-side todo app: plain HTML, CSS and JavaScript with no build step or dependencies.
 
