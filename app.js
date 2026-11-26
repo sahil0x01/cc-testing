@@ -18,11 +18,16 @@
   var countEl = document.getElementById('todo-count');
   var toggleAllBtn = document.getElementById('toggle-all');
   var clearCompletedBtn = document.getElementById('clear-completed');
+  var undoBtn = document.getElementById('undo-delete');
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
   // Unsaved edit text, kept across the re-render caused by any other action.
   var editDraft = null;
+  // The rows removed by the newest delete, as { todo, index } entries in ascending
+  // index order, or null when there is nothing to put back. Memory only: one step,
+  // replaced by the next delete and forgotten on reload.
+  var lastDeletion = null;
   // Raw search box value; empty means "show everything".
   var query = '';
   // One of SORT_MODES: which timestamp orders the list, and in which direction.
