@@ -245,7 +245,8 @@
       countEl.textContent = remaining + ' of ' + todos.length + ' left';
     }
 
-    searchClear.hidden = query === '';
+    // Only offer Clear when the field holds something that actually filters.
+    searchClear.hidden = !searching;
 
     if (editingId) {
       var editInput = list.querySelector('.edit-input');
