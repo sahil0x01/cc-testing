@@ -23,9 +23,40 @@
   var editDraft = null;
   // Raw search box value; empty means "show everything".
   var query = '';
+  // One of SORT_MODES: which timestamp orders the list, and in which direction.
+  var sort = loadSort();
   var todos = load();
 
   /* ---------- storage ---------- */
+
+  function loadSort() {
+    var stored;
+    try {
+      stored = window.localStorage.getItem(SORT_KEY);
+    } catch (err) {
+      return DEFAULT_SORT;
+    }
+    return SORT_MODES.indexOf(stored) === -1 ? DEFAULT_SORT : stored;
+  }
+
+  function saveSort() {
+    try {
+      window.localStorage.setItem(SORT_KEY, sort);
+    } catch (err) {
+      // Storage can be unavailable (private mode, quota); sorting still works for this visit.
+    }
+  }
+
+  function isTime(value) {
+    return typeof value === 'number' && isFinite(value) && value > 0;
+  }
+
+  // Todos saved before timestamps existed had ids starting with a base-36
+  // Date.now(), so their creation time can still be recovered from the id.
+  function legacyTime(id) {
+    var stamped = parseInt(id, 36);
+    return isFinite(stamped) && stamped > 0 ? stamped : 0;
+  }
 
   function load() {
     var raw;
@@ -40,7 +71,14 @@
         return todo && typeof todo.text === 'string' && typeof todo.id === 'string';
       })
       .map(function (todo) {
-        return { id: todo.id, text: todo.text, done: todo.done === true };
+        var createdAt = isTime(todo.createdAt) ? todo.createdAt : legacyTime(todo.id);
+        return {
+          id: todo.id,
+          text: todo.text,
+          done: todo.done === true,
+          createdAt: createdAt,
+          updatedAt: isTime(todo.updatedAt) ? todo.updatedAt : createdAt,
+        };
       });
   }
 
@@ -68,7 +106,8 @@
   function addTodo(text) {
     text = String(text || '').trim();
     if (!text) return null;
-    var todo = { id: newId(), text: text, done: false };
+    var now = Date.now();
+    var todo = { id: newId(), text: text, done: false, createdAt: now, updatedAt: now };
     todos.push(todo);
     save();
     render();
@@ -79,7 +118,11 @@
     var todo = find(id);
     text = String(text || '').trim();
     if (!todo || !text) return null;
-    todo.text = text;
+    // An unchanged text is not an edit, so it should not reshuffle the list.
+    if (todo.text !== text) {
+      todo.text = text;
+      todo.updatedAt = Date.now();
+    }
     save();
     render();
     return todo;
@@ -89,6 +132,7 @@
     var todo = find(id);
     if (!todo) return null;
     todo.done = !todo.done;
+    todo.updatedAt = Date.now();
     save();
     render();
     return todo;
@@ -172,6 +216,40 @@
   function setQuery(value) {
     query = String(value == null ? '' : value);
     applyFilter();
+  }
+
+  /* ---------- sorting ---------- */
+
+  function sortField() {
+    return sort.indexOf('created') === 0 ? 'createdAt' : 'updatedAt';
+  }
+
+  function sortDirection() {
+    return sort.indexOf('-desc') !== -1 ? -1 : 1;
+  }
+
+  // Ties fall back to the id so rows with identical timestamps keep a stable
+  // order instead of swapping places between renders.
+  function compareTodos(a, b) {
+    var field = sortField();
+    var diff = a[field] - b[field];
+    if (diff === 0) {
+      diff = a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+    }
+    return diff * sortDirection();
+  }
+
+  // A sorted copy: the stored array keeps insertion order, so only the rendered
+  // order depends on the current sort mode.
+  function sortedTodos() {
+    return todos.slice().sort(compareTodos);
+  }
+
+  function setSort(value) {
+    sort = SORT_MODES.indexOf(value) === -1 ? DEFAULT_SORT : value;
+    sortSelect.value = sort;
+    saveSort();
+    render();
   }
 
   /* ---------- rendering ---------- */
@@ -262,17 +340,23 @@
     return item;
   }
 
+  // Controls that a re-render must never pull focus away from.
+  function focusIsElsewhere() {
+    return document.activeElement === searchInput || document.activeElement === sortSelect;
+  }
+
   function render() {
     list.textContent = '';
-    todos.forEach(function (todo) {
+    sortedTodos().forEach(function (todo) {
       list.appendChild(renderItem(todo));
     });
     applyFilter();
 
     if (editingId) {
       var editInput = list.querySelector('.edit-input');
-      // Don't steal focus from the search box, and never focus a filtered-out row.
-      if (editInput && !editInput.closest('.todo').hidden && document.activeElement !== searchInput) {
+      // Don't steal focus from the search box or the sort menu, and never focus
+      // a filtered-out row.
+      if (editInput && !editInput.closest('.todo').hidden && !focusIsElsewhere()) {
         editInput.focus();
         editInput.select();
       }
@@ -323,5 +407,11 @@
     searchInput.focus();
   });
 
+  sortSelect.addEventListener('change', function () {
+    setSort(sortSelect.value);
+  });
+
+  // Reflect the stored sort mode in the select before the first render.
+  sortSelect.value = sort;
   render();
 })();
