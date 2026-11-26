@@ -181,7 +181,8 @@ h1 {
   border-bottom: 3px dashed rgba(27, 27, 47, 0.28);
 }
 
-.todo:last-child {
+/* Set by applyFilter() on the last row that is currently visible. */
+.todo.is-last {
   border-bottom: 0;
 }
 

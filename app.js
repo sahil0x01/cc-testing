@@ -257,43 +257,16 @@
   }
 
   function render() {
-    var searching = searchTerm() !== '';
-    var visible = visibleTodos();
-
-    // Drop edit mode if the row being edited no longer passes the filter.
-    if (editingId && !visible.some(function (todo) { return todo.id === editingId; })) {
-      stopEditing();
-    }
-
     list.textContent = '';
-    visible.forEach(function (todo) {
+    todos.forEach(function (todo) {
       list.appendChild(renderItem(todo));
     });
-
-    emptyState.textContent = searching
-      ? 'No todos match "' + query.trim() + '".'
-      : 'Nothing to do yet.';
-    emptyState.hidden = visible.length > 0;
-
-    var remaining = todos.filter(function (todo) {
-      return !todo.done;
-    }).length;
-    if (todos.length === 0) {
-      countEl.textContent = '';
-    } else if (searching) {
-      countEl.textContent =
-        'Showing ' + visible.length + ' of ' + todos.length + ' · ' + remaining + ' of ' + todos.length + ' left';
-    } else {
-      countEl.textContent = remaining + ' of ' + todos.length + ' left';
-    }
-
-    // Only offer Clear when the field holds something that actually filters.
-    searchClear.hidden = !searching;
+    applyFilter();
 
     if (editingId) {
       var editInput = list.querySelector('.edit-input');
-      // Leave focus in the search box while the user is typing a query.
-      if (editInput && document.activeElement !== searchInput) {
+      // Don't steal focus from the search box, and never focus a filtered-out row.
+      if (editInput && !editInput.closest('.todo').hidden && document.activeElement !== searchInput) {
         editInput.focus();
         editInput.select();
       }
@@ -301,10 +274,15 @@
   }
 
   function commitEdit(id, text) {
-    // An empty input keeps the todo unchanged and just leaves edit mode.
-    updateTodo(id, text);
+    var todo = find(id);
+    var next = String(text || '').trim();
     stopEditing();
-    render();
+    // An empty input leaves the todo unchanged, but still leaves edit mode.
+    if (todo && next) {
+      updateTodo(id, next);
+    } else {
+      render();
+    }
   }
 
   /* ---------- events ---------- */
