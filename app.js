@@ -215,9 +215,8 @@
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
-    if (addTodo(input.value)) {
-      input.value = '';
-    }
+    addTodo(input.value);
+    input.value = '';
     input.focus();
   });
 
