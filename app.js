@@ -13,7 +13,7 @@
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
-  // Unsaved edit text, kept across re-renders (searching re-renders on every keypress).
+  // Unsaved edit text, kept across the re-render caused by any other action.
   var editDraft = null;
   // Raw search box value; empty means "show everything".
   var query = '';
@@ -107,23 +107,65 @@
 
   /* ---------- search ---------- */
 
+  // Normalised query: trimmed and lower-cased, so matching ignores case and padding.
   function searchTerm() {
     return query.trim().toLowerCase();
   }
 
   function matchesQuery(todo) {
     var needle = searchTerm();
-    if (!needle) return true;
-    return todo.text.toLowerCase().indexOf(needle) !== -1;
+    return needle === '' || todo.text.toLowerCase().indexOf(needle) !== -1;
   }
 
-  function visibleTodos() {
-    return todos.filter(matchesQuery);
+  // Apply the filter by hiding rows in place instead of re-rendering them. The
+  // nodes stay put, so an in-progress edit, its unsaved text and the focus in the
+  // search box all survive every keypress.
+  function applyFilter() {
+    var searching = searchTerm() !== '';
+    var shown = 0;
+    var lastShown = null;
+    var items = list.children;
+
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var todo = find(item.dataset.id);
+      var visible = todo !== null && matchesQuery(todo);
+      item.hidden = !visible;
+      if (visible) {
+        shown++;
+        lastShown = item;
+      }
+    }
+
+    // The dashed separator belongs under the last visible row, not the last DOM row.
+    for (var j = 0; j < items.length; j++) {
+      items[j].classList.toggle('is-last', items[j] === lastShown);
+    }
+
+    emptyState.textContent = searching
+      ? 'No todos match "' + query.trim() + '".'
+      : 'Nothing to do yet.';
+    emptyState.hidden = shown > 0;
+
+    var remaining = todos.filter(function (todo) {
+      return !todo.done;
+    }).length;
+    if (todos.length === 0) {
+      countEl.textContent = '';
+    } else if (searching) {
+      countEl.textContent =
+        'Showing ' + shown + ' of ' + todos.length + ' · ' + remaining + ' of ' + todos.length + ' left';
+    } else {
+      countEl.textContent = remaining + ' of ' + todos.length + ' left';
+    }
+
+    // Only offer Clear when the box holds something that actually filters.
+    searchClear.hidden = !searching;
   }
 
   function setQuery(value) {
     query = String(value == null ? '' : value);
-    render();
+    applyFilter();
   }
 
   /* ---------- rendering ---------- */
