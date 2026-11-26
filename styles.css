@@ -1,30 +1,67 @@
+:root {
+  --ink: #1b1b2f;
+  --paper: #f6f2e4;
+  --panel: #fffdf3;
+  --muted: #6f6b7d;
+  --accent: #3b5bdb;
+  --accent-dark: #2a44a8;
+  --danger: #b42318;
+  --outline: var(--accent);
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+html {
+  /* Keep anything rasterised (and any future images) crunchy instead of smoothed. */
+  image-rendering: pixelated;
+}
+
 body {
   margin: 0;
   padding: 2rem 1rem;
   min-height: 100vh;
-  background: #f4f5f7;
-  color: #1f2933;
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--paper);
+  /* 8px checkerboard dither, drawn with hard conic stops so the squares stay crisp. */
+  background-image: conic-gradient(
+    rgba(27, 27, 47, 0.06) 25%,
+    transparent 0 50%,
+    rgba(27, 27, 47, 0.06) 0 75%,
+    transparent 0
+  );
+  background-size: 16px 16px;
+  color: var(--ink);
+  font: 16px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
 }
 
 .app {
   max-width: 34rem;
   margin: 0 auto;
   padding: 1.5rem;
-  background: #fff;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--ink);
 }
 
 h1 {
   margin: 0 0 1.25rem;
-  font-size: 1.5rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 3px solid var(--ink);
+  font-size: 1.35rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 0 rgba(27, 27, 47, 0.18);
 }
 
 .new-todo {
@@ -37,44 +74,76 @@ h1 {
 .edit-input {
   flex: 1;
   min-width: 0;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid #cbd2d9;
-  border-radius: 0.4rem;
+  padding: 0.6rem 0.7rem;
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: inherit;
   font: inherit;
+  box-shadow: inset 3px 3px 0 rgba(27, 27, 47, 0.08);
+}
+
+.new-todo-input::placeholder {
+  color: var(--muted);
 }
 
 .new-todo-input:focus,
 .edit-input:focus {
-  outline: 2px solid #6b8afd;
-  outline-offset: 1px;
+  outline: 3px solid var(--outline);
+  outline-offset: 2px;
+  background: #fff;
 }
 
 .btn {
-  padding: 0.5rem 0.85rem;
-  border: 1px solid #cbd2d9;
-  border-radius: 0.4rem;
-  background: #fff;
+  padding: 0.55rem 0.9rem;
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--panel);
   color: inherit;
   font: inherit;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
+  /* Hard offset shadow plus a 1px hover nudge: buttons snap, they never glide. */
+  box-shadow: 4px 4px 0 var(--ink);
+  user-select: none;
 }
 
 .btn:hover {
-  background: #f0f2f5;
+  background: #e9e3d0;
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.btn:focus-visible,
+.todo-checkbox:focus-visible {
+  outline: 3px solid var(--outline);
+  outline-offset: 2px;
 }
 
 .btn-primary {
-  border-color: #3451b2;
-  background: #3451b2;
+  background: var(--accent);
   color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
 }
 
 .btn-primary:hover {
-  background: #2b449a;
+  background: var(--accent-dark);
 }
 
 .btn-danger {
-  color: #b42318;
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: #fff;
 }
 
 .todo-list {
@@ -87,12 +156,54 @@ h1 {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.55rem 0;
-  border-bottom: 1px solid #eef1f4;
+  padding: 0.6rem 0;
+  border-bottom: 3px dashed rgba(27, 27, 47, 0.28);
 }
 
 .todo:last-child {
   border-bottom: 0;
+}
+
+.todo-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: 0 0 auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: 0;
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: inset 3px 3px 0 rgba(27, 27, 47, 0.1);
+  cursor: pointer;
+}
+
+.todo-checkbox:checked {
+  background: #fff;
+}
+
+/* The tick is a 5x5 grid of 4px blocks drawn with box-shadow, so it stays blocky. */
+.todo-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin: -10px 0 0 -10px;
+  background: transparent;
+  box-shadow:
+    16px 0 0 var(--ink),
+    12px 4px 0 var(--ink),
+    16px 4px 0 var(--ink),
+    8px 8px 0 var(--ink),
+    12px 8px 0 var(--ink),
+    0 12px 0 var(--ink),
+    4px 12px 0 var(--ink),
+    8px 12px 0 var(--ink),
+    0 16px 0 var(--ink),
+    4px 16px 0 var(--ink);
 }
 
 .todo-text {
@@ -101,26 +212,51 @@ h1 {
 }
 
 .todo.done .todo-text {
-  color: #7b8794;
+  color: var(--muted);
   text-decoration: line-through;
+  text-decoration-thickness: 2px;
 }
 
 .todo-actions {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .todo-edit {
   display: flex;
   flex: 1;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .empty-state,
 .todo-count {
-  margin: 0.75rem 0 0;
-  color: #7b8794;
-  font-size: 0.875rem;
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 26rem) {
+  body {
+    padding: 1rem 0.5rem;
+  }
+
+  .app {
+    padding: 1rem;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+
+  .btn {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .todo,
+  .todo-actions,
+  .todo-edit {
+    gap: 0.4rem;
+  }
 }
 
 [hidden] {
