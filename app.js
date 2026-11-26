@@ -178,6 +178,8 @@
   function deleteTodo(id) {
     var todo = find(id);
     if (!todo) return null;
+    // Its current position is what Undo needs to put the row back where it was.
+    lastDeletion = [{ todo: todo, index: todos.indexOf(todo) }];
     todos = todos.filter(function (item) {
       return item.id !== id;
     });
@@ -194,13 +196,41 @@
 
   // Drops every completed todo at once; undone todos keep their place and order.
   function clearCompleted() {
+    var removed = [];
+    todos.forEach(function (todo, index) {
+      if (todo.done) removed.push({ todo: todo, index: index });
+    });
+    // Nothing was removed, so don't throw away a delete that can still be undone.
+    if (removed.length === 0) return;
     todos = todos.filter(function (todo) {
       return !todo.done;
     });
     // The row being edited may have just been removed with the rest.
     if (editingId && !find(editingId)) stopEditing();
+    lastDeletion = removed;
     save();
     render();
+  }
+
+  // Puts the newest deletion back. Only the removed rows are restored, so anything
+  // done to the remaining todos in the meantime (an add, a toggle, an edit, a
+  // re-sort) is kept; a batch of cleared rows is re-inserted at its old indexes.
+  function undoDelete() {
+    if (!lastDeletion) return;
+    var entries = lastDeletion;
+    lastDeletion = null;
+    var firstRestored = null;
+    entries.forEach(function (entry) {
+      if (find(entry.todo.id)) return;
+      var at = Math.max(0, Math.min(entry.index, todos.length));
+      todos.splice(at, 0, entry.todo);
+      if (firstRestored === null) firstRestored = entry.todo.id;
+    });
+    save();
+    render();
+    // The button that was just used is gone, so park focus on what came back — but
+    // never pull it out of the search box or the sort menu.
+    if (!focusIsElsewhere() && !focusTodo(firstRestored)) input.focus();
   }
 
   /* ---------- search ---------- */
@@ -273,6 +303,18 @@
     toggleAllBtn.title = everythingDone
       ? 'Mark every todo as not done'
       : 'Mark every todo as done';
+
+    // Undo is offered only while the newest delete can be put back, and says how
+    // many rows that would restore.
+    undoBtn.hidden = !lastDeletion;
+    if (lastDeletion) {
+      var removedCount = lastDeletion.length;
+      undoBtn.textContent = removedCount > 1 ? 'Undo (' + removedCount + ')' : 'Undo';
+      undoBtn.title =
+        removedCount > 1
+          ? 'Restore the ' + removedCount + ' todos deleted last'
+          : 'Restore the todo deleted last';
+    }
   }
 
   function setQuery(value) {
@@ -418,6 +460,22 @@
     return document.activeElement === searchInput || document.activeElement === sortSelect;
   }
 
+  // Focus a row's checkbox by id. Returns false when the row is missing, or hidden
+  // by the active search, so the caller can fall back to another control.
+  function focusTodo(id) {
+    if (!id) return false;
+    var items = list.children;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].dataset.id !== id || items[i].hidden) continue;
+      var checkbox = items[i].querySelector('.todo-checkbox');
+      if (checkbox) {
+        checkbox.focus();
+        return true;
+      }
+    }
+    return false;
+  }
+
   function render() {
     list.textContent = '';
     sortedTodos().forEach(function (todo) {
@@ -490,6 +548,10 @@
 
   clearCompletedBtn.addEventListener('click', function () {
     clearCompleted();
+  });
+
+  undoBtn.addEventListener('click', function () {
+    undoDelete();
   });
 
   // Reflect the stored sort mode in the select before the first render.
