@@ -435,6 +435,7 @@
     );
 
     item.appendChild(checkbox);
+    item.appendChild(priorityMarker(todo));
     item.appendChild(text);
     item.appendChild(actions);
     return item;
@@ -463,13 +464,13 @@
     }
   }
 
-  function commitEdit(id, text) {
+  function commitEdit(id, text, priority) {
     var todo = find(id);
     var next = String(text || '').trim();
     stopEditing();
     // An empty input leaves the todo unchanged, but still leaves edit mode.
     if (todo && next) {
-      updateTodo(id, next);
+      updateTodo(id, next, priority);
     } else {
       render();
     }
@@ -479,13 +480,15 @@
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
-    var added = addTodo(input.value);
+    var added = addTodo(input.value, prioritySelect.value);
     // Don't let a new todo vanish into an active filter the user forgot about.
     if (added && !matchesQuery(added)) {
       searchInput.value = '';
       setQuery('');
     }
     input.value = '';
+    // The picker snaps back to the default, so the next add is plain unless asked otherwise.
+    prioritySelect.value = DEFAULT_PRIORITY;
     input.focus();
   });
 
