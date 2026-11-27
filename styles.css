@@ -118,11 +118,6 @@ h1 {
   background-color: #fff;
 }
 
-.clear-all {
-  display: block;
-  margin: 0 0 1rem auto;
-}
-
 .new-todo-input,
 .edit-input,
 .search-input {
@@ -285,6 +280,13 @@ h1 {
   color: var(--muted);
   font-size: 0.8125rem;
   letter-spacing: 0.04em;
+}
+
+/* Footer row holding the destructive bulk action. */
+.bulk {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.9rem;
 }
 
 @media (max-width: 26rem) {

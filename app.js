@@ -13,10 +13,10 @@
   var searchInput = document.getElementById('search-input');
   var searchClear = document.getElementById('search-clear');
   var sortSelect = document.getElementById('sort-select');
-  var clearAllButton = document.getElementById('clear-all');
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
+  var clearAllButton = document.getElementById('clear-all');
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
@@ -156,18 +156,22 @@
     return todo;
   }
 
+  function stopEditing() {
+    editingId = null;
+    editDraft = null;
+  }
+
+  // Wipes the whole list, filter or not, after an explicit confirmation.
   function clearAllTodos() {
-    if (todos.length === 0) return;
-    if (!window.confirm('Remove all todos?')) return;
+    if (todos.length === 0) return false;
+    if (!window.confirm('Delete all ' + todos.length + ' todo' + (todos.length === 1 ? '' : 's') + '? This cannot be undone.')) {
+      return false;
+    }
     todos = [];
     stopEditing();
     save();
     render();
-  }
-
-  function stopEditing() {
-    editingId = null;
-    editDraft = null;
+    return true;
   }
 
   /* ---------- search ---------- */
@@ -226,6 +230,7 @@
 
     // Only offer Clear when the box holds something that actually filters.
     searchClear.hidden = !searching;
+    // Nothing to clear once the list is empty.
     clearAllButton.hidden = todos.length === 0;
   }
 
