@@ -16,6 +16,7 @@
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
+  var markAllDoneBtn = document.getElementById('mark-all-done');
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
@@ -155,6 +156,22 @@
     return todo;
   }
 
+  // Checks every todo at once, including rows hidden by the current filter: the
+  // action covers the whole list, the same way the status line counts it.
+  function markAllDone() {
+    var now = Date.now();
+    var changed = false;
+    todos.forEach(function (todo) {
+      if (todo.done) return;
+      todo.done = true;
+      todo.updatedAt = now;
+      changed = true;
+    });
+    if (!changed) return;
+    save();
+    render();
+  }
+
   function stopEditing() {
     editingId = null;
     editDraft = null;
@@ -216,6 +233,9 @@
 
     // Only offer Clear when the box holds something that actually filters.
     searchClear.hidden = !searching;
+
+    // Nothing left to mark once every todo is done.
+    markAllDoneBtn.hidden = remaining === 0;
   }
 
   function setQuery(value) {
@@ -425,6 +445,10 @@
 
   sortSelect.addEventListener('change', function () {
     setSort(sortSelect.value);
+  });
+
+  markAllDoneBtn.addEventListener('click', function () {
+    markAllDone();
   });
 
   // Reflect the stored sort mode in the select before the first render.
