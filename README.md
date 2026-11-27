@@ -21,12 +21,12 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 - Read: the list is rendered from `localStorage`, so todos survive reloads
 - Update: check the box to toggle done, or use Edit (Enter saves, Escape cancels)
 - Priority: each todo is low, normal (the default) or high. Pick one in the add
-  form, or change it later with the small menu on the row. Every row shows its
-  priority as a small square pixel marker: green for low, blue for normal, red for
-  high (dimmed once the todo is done). The marker's tooltip and the row tooltip
-  spell the level out. Priority is saved with the todo and a change counts as an
-  edit, so it bumps the updated time. Todos saved before priorities existed load
-  as normal.
+  form (it goes back to normal after each add), or change it later with the small
+  menu on the row. Every row shows its priority as a small square pixel marker:
+  green for low, blue for normal, red for high (dimmed once the todo is done). The
+  marker's tooltip and the row tooltip spell the level out. Priority is saved with
+  the todo, and a change counts as an edit, so it bumps the updated time. Todos
+  saved before priorities existed load as normal.
 - Delete: the Delete button on each row
 - Clear all: the Clear all button at the bottom removes every todo, matching the
   search filter or not. It asks for confirmation first, and it is hidden while the
