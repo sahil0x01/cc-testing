@@ -16,6 +16,7 @@
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
+  var clearAllButton = document.getElementById('clear-all');
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
