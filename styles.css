@@ -12,6 +12,8 @@
   --outline: var(--accent);
   --on-accent: #fff;
   --on-danger: #fff;
+  /* Pixel drop shadow under the primary button label. */
+  --label-shadow: rgba(0, 0, 0, 0.35);
 
   /* Translucent inks: the checkerboard, the title drop shadow and row rules. */
   --dither: rgba(27, 27, 47, 0.06);
@@ -46,6 +48,7 @@
     /* Dark text on the lighter accents keeps the contrast pixel-crisp. */
     --on-accent: #14141f;
     --on-danger: #14141f;
+    --label-shadow: rgba(20, 20, 31, 0.25);
 
     --dither: rgba(233, 230, 245, 0.05);
     --title-shadow: rgba(0, 0, 0, 0.55);
@@ -95,7 +98,7 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .app {
@@ -149,7 +152,7 @@ h1 {
   border-radius: 0;
   background-color: var(--paper);
   /* 7x4 pixel down-arrow, scaled 3x, matching --ink. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1h-7zM1 1h5v1h-5zM2 2h3v1h-3zM3 3h1v1h-1z' fill='%231b1b2f'/%3E%3C/svg%3E");
+  background-image: var(--select-arrow);
   background-repeat: no-repeat;
   background-position: right 0.6rem center;
   background-size: 21px 12px;
@@ -168,7 +171,7 @@ h1 {
 .sort-select:focus {
   outline: 3px solid var(--outline);
   outline-offset: 2px;
-  background-color: var(--check-bg);
+  background-color: var(--field-focus);
 }
 
 .new-todo-input,
@@ -245,8 +248,8 @@ h1 {
 
 .btn-primary {
   background: var(--accent);
-  color: #fff;
-  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+  color: var(--on-accent);
+  text-shadow: 2px 2px 0 var(--label-shadow);
 }
 
 .btn-primary:hover {
@@ -259,7 +262,7 @@ h1 {
 
 .btn-danger:hover {
   background: var(--danger);
-  color: #fff;
+  color: var(--on-danger);
 }
 
 .todo-list {
@@ -298,7 +301,7 @@ h1 {
 /* The tick is a 5x5 pixel grid (fill matches --ink) scaled up 4x, so it stays blocky. */
 .todo-checkbox:checked {
   background-color: var(--check-bg);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5' shape-rendering='crispEdges'%3E%3Cpath d='M4 0h1v1h-1zM3 1h1v1h-1zM4 1h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM0 3h3v1h-3zM0 4h2v1h-2z' fill='%231b1b2f'/%3E%3C/svg%3E");
+  background-image: var(--check-mark);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 20px 20px;
