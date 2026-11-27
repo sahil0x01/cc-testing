@@ -21,6 +21,8 @@
   var editingId = null;
   // Unsaved edit text, kept across the re-render caused by any other action.
   var editDraft = null;
+  // The todo whose Delete button was pressed and is waiting for confirmation.
+  var confirmId = null;
   // Raw search box value; empty means "show everything".
   var query = '';
   // One of SORT_MODES: which timestamp orders the list, and in which direction.
@@ -150,6 +152,7 @@
       return item.id !== id;
     });
     if (editingId === id) stopEditing();
+    if (confirmId === id) confirmId = null;
     save();
     render();
     return todo;
@@ -158,6 +161,31 @@
   function stopEditing() {
     editingId = null;
     editDraft = null;
+  }
+
+  // Deleting is the one action that cannot be undone, so it takes two clicks:
+  // Delete asks, and only the confirmation itself removes the todo.
+  function askDelete(id) {
+    if (!find(id)) return null;
+    stopEditing();
+    confirmId = id;
+    render();
+    return find(id);
+  }
+
+  function cancelDelete() {
+    var id = confirmId;
+    if (id === null) return null;
+    confirmId = null;
+    render();
+    // Put focus back on the Delete button of the row that was asking.
+    var button = id && list.querySelector('.todo[data-id="' + id + '"] .btn-danger');
+    if (button) button.focus();
+    return id;
+  }
+
+  function confirmDelete(id) {
+    return deleteTodo(id);
   }
 
   /* ---------- search ---------- */
@@ -341,12 +369,13 @@
       makeButton('Edit', 'btn', function () {
         editingId = todo.id;
         editDraft = null;
+        confirmId = null;
         render();
       })
     );
     actions.appendChild(
       makeButton('Delete', 'btn btn-danger', function () {
-        deleteTodo(todo.id);
+        askDelete(todo.id);
       })
     );
 
