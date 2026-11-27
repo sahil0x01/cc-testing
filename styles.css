@@ -1,4 +1,7 @@
 :root {
+  /* Let the browser theme form controls, scrollbars and menus to match. */
+  color-scheme: light;
+
   --ink: #1b1b2f;
   --paper: #f6f2e4;
   --panel: #fffdf3;
@@ -7,6 +10,56 @@
   --accent-dark: #2a44a8;
   --danger: #b42318;
   --outline: var(--accent);
+  --on-accent: #fff;
+  --on-danger: #fff;
+
+  /* Translucent inks: the checkerboard, the title drop shadow and row rules. */
+  --dither: rgba(27, 27, 47, 0.06);
+  --title-shadow: rgba(27, 27, 47, 0.18);
+  --rule: rgba(27, 27, 47, 0.28);
+  /* Inner bevel used by every field, and the colour they turn on hover/focus. */
+  --bevel: rgba(27, 27, 47, 0.08);
+  --bevel-strong: rgba(27, 27, 47, 0.1);
+  --hover: #e9e3d0;
+  --field-focus: #fff;
+  --check-bg: #fff;
+
+  /* 7x4 pixel down-arrow and 5x5 pixel tick, both scaled up and unpadded. */
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1h-7zM1 1h5v1h-5zM2 2h3v1h-3zM3 3h1v1h-1z' fill='%231b1b2f'/%3E%3C/svg%3E");
+  --check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5' shape-rendering='crispEdges'%3E%3Cpath d='M4 0h1v1h-1zM3 1h1v1h-1zM4 1h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM0 3h3v1h-3zM0 4h2v1h-2z' fill='%231b1b2f'/%3E%3C/svg%3E");
+}
+
+/* Dark mode simply re-points the palette; every rule below reads these vars.
+   The same chunky borders, hard shadows, dither and pixel icons are kept. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --ink: #e9e6f5;
+    --paper: #101019;
+    --panel: #1a1a28;
+    --muted: #9d98b5;
+    --accent: #7b95ff;
+    --accent-dark: #9aaeff;
+    --danger: #ff7a6b;
+    --outline: var(--accent);
+    /* Dark text on the lighter accents keeps the contrast pixel-crisp. */
+    --on-accent: #14141f;
+    --on-danger: #14141f;
+
+    --dither: rgba(233, 230, 245, 0.05);
+    --title-shadow: rgba(0, 0, 0, 0.55);
+    --rule: rgba(233, 230, 245, 0.26);
+    /* A dark UI bevels downwards, so the insets are pure shadow. */
+    --bevel: rgba(0, 0, 0, 0.35);
+    --bevel-strong: rgba(0, 0, 0, 0.45);
+    --hover: #2a2a40;
+    --field-focus: #24243a;
+    --check-bg: #24243a;
+
+    --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1h-7zM1 1h5v1h-5zM2 2h3v1h-3zM3 3h1v1h-1z' fill='%23e9e6f5'/%3E%3C/svg%3E");
+    --check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5' shape-rendering='crispEdges'%3E%3Cpath d='M4 0h1v1h-1zM3 1h1v1h-1zM4 1h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM0 3h3v1h-3zM0 4h2v1h-2z' fill='%23e9e6f5'/%3E%3C/svg%3E");
+  }
 }
 
 *,
