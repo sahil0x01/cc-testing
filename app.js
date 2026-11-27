@@ -377,6 +377,13 @@
       editPriority.addEventListener('change', function () {
         priorityDraft = editPriority.value;
       });
+      // Escape cancels from the menu too, not just from the text field.
+      editPriority.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          stopEditing();
+          render();
+        }
+      });
 
       editInput.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
