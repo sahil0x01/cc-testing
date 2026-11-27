@@ -61,6 +61,11 @@
     return typeof value === 'number' && isFinite(value) && value > 0;
   }
 
+  // Missing or unknown priorities (todos saved before the feature) become normal.
+  function normalisePriority(value) {
+    return PRIORITIES.indexOf(value) === -1 ? DEFAULT_PRIORITY : value;
+  }
+
   // Todos saved before timestamps existed were given ids of the form
   // Date.now().toString(36) + five random base-36 chars, so their creation time
   // can still be recovered from the id prefix. Unknown ids return 0 and fall back
@@ -91,6 +96,7 @@
           id: todo.id,
           text: todo.text,
           done: todo.done === true,
+          priority: normalisePriority(todo.priority),
           createdAt: createdAt,
           updatedAt: isTime(todo.updatedAt) ? todo.updatedAt : createdAt,
         };
@@ -118,24 +124,33 @@
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
-  function addTodo(text) {
+  function addTodo(text, priority) {
     text = String(text || '').trim();
     if (!text) return null;
     var now = Date.now();
-    var todo = { id: newId(), text: text, done: false, createdAt: now, updatedAt: now };
+    var todo = {
+      id: newId(),
+      text: text,
+      done: false,
+      priority: normalisePriority(priority),
+      createdAt: now,
+      updatedAt: now,
+    };
     todos.push(todo);
     save();
     render();
     return todo;
   }
 
-  function updateTodo(id, text) {
+  function updateTodo(id, text, priority) {
     var todo = find(id);
     text = String(text || '').trim();
+    priority = normalisePriority(priority);
     if (!todo || !text) return null;
-    // An unchanged text is not an edit, so it should not reshuffle the list.
-    if (todo.text !== text) {
+    // An unchanged text and priority is not an edit, so it should not reshuffle the list.
+    if (todo.text !== text || todo.priority !== priority) {
       todo.text = text;
+      todo.priority = priority;
       todo.updatedAt = Date.now();
     }
     save();
@@ -168,6 +183,7 @@
   function stopEditing() {
     editingId = null;
     editDraft = null;
+    priorityDraft = null;
   }
 
   // Wipes the whole list, filter or not, after an explicit confirmation.
@@ -298,6 +314,34 @@
     return button;
   }
 
+  // A priority menu with the standard levels; the caller wires up its behaviour.
+  function makePrioritySelect(label, value) {
+    var select = document.createElement('select');
+    select.className = 'priority-select';
+    select.setAttribute('aria-label', label);
+    select.title = label;
+    PRIORITIES.forEach(function (level) {
+      var option = document.createElement('option');
+      option.value = level;
+      option.textContent = PRIORITY_LABELS[level];
+      select.appendChild(option);
+    });
+    select.value = normalisePriority(value);
+    return select;
+  }
+
+  // The small square marker in front of a row: a 2px-wide pixel bar that grows
+  // with the priority (one block for low, two for normal, three for high), so the
+  // level reads without relying on colour alone.
+  function priorityMarker(todo) {
+    var marker = document.createElement('span');
+    marker.className = 'todo-priority todo-priority-' + todo.priority;
+    marker.setAttribute('role', 'img');
+    marker.setAttribute('aria-label', 'Priority: ' + PRIORITY_LABELS[todo.priority]);
+    marker.title = 'Priority: ' + PRIORITY_LABELS[todo.priority];
+    return marker;
+  }
+
   // Timestamps are only shown as a native tooltip: the list itself stays plain.
   function formatTime(ms) {
     return ms > 0 ? new Date(ms).toLocaleString() : 'unknown';
@@ -307,7 +351,11 @@
     var item = document.createElement('li');
     item.className = 'todo' + (todo.done ? ' done' : '');
     item.dataset.id = todo.id;
-    item.title = 'Created ' + formatTime(todo.createdAt) + ' · Updated ' + formatTime(todo.updatedAt);
+    item.dataset.priority = todo.priority;
+    item.title =
+      'Created ' + formatTime(todo.createdAt) +
+      ' · Updated ' + formatTime(todo.updatedAt) +
+      ' · Priority ' + PRIORITY_LABELS[todo.priority].toLowerCase();
 
     if (editingId === todo.id) {
       var editRow = document.createElement('div');
@@ -321,10 +369,19 @@
       editInput.addEventListener('input', function () {
         editDraft = editInput.value;
       });
+
+      var editPriority = makePrioritySelect(
+        'Priority for "' + todo.text + '"',
+        priorityDraft === null ? todo.priority : priorityDraft
+      );
+      editPriority.addEventListener('change', function () {
+        priorityDraft = editPriority.value;
+      });
+
       editInput.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
           event.preventDefault();
-          commitEdit(todo.id, editInput.value);
+          commitEdit(todo.id, editInput.value, editPriority.value);
         } else if (event.key === 'Escape') {
           stopEditing();
           render();
@@ -332,9 +389,10 @@
       });
 
       editRow.appendChild(editInput);
+      editRow.appendChild(editPriority);
       editRow.appendChild(
         makeButton('Save', 'btn btn-primary', function () {
-          commitEdit(todo.id, editInput.value);
+          commitEdit(todo.id, editInput.value, editPriority.value);
         })
       );
       editRow.appendChild(
@@ -366,6 +424,7 @@
       makeButton('Edit', 'btn', function () {
         editingId = todo.id;
         editDraft = null;
+        priorityDraft = null;
         render();
       })
     );
