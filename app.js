@@ -156,6 +156,15 @@
     return todo;
   }
 
+  function clearAllTodos() {
+    if (todos.length === 0) return;
+    if (!window.confirm('Remove all todos?')) return;
+    todos = [];
+    stopEditing();
+    save();
+    render();
+  }
+
   function stopEditing() {
     editingId = null;
     editDraft = null;
@@ -217,6 +226,7 @@
 
     // Only offer Clear when the box holds something that actually filters.
     searchClear.hidden = !searching;
+    clearAllButton.hidden = todos.length === 0;
   }
 
   function setQuery(value) {
@@ -427,6 +437,8 @@
   sortSelect.addEventListener('change', function () {
     setSort(sortSelect.value);
   });
+
+  clearAllButton.addEventListener('click', clearAllTodos);
 
   // Reflect the stored sort mode in the select before the first render.
   sortSelect.value = sort;

@@ -118,6 +118,11 @@ h1 {
   background-color: #fff;
 }
 
+.clear-all {
+  display: block;
+  margin: 0 0 1rem auto;
+}
+
 .new-todo-input,
 .edit-input,
 .search-input {
