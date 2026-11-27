@@ -118,6 +118,49 @@ h1 {
   background-color: #fff;
 }
 
+/* Priority menu: the sort menu's pixel chrome at a smaller size. The 7x4 arrow is
+   the same hand-plotted SVG, scaled 2x instead of 3x. */
+.priority-select {
+  flex: 0 0 auto;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0.3rem 1.4rem 0.3rem 0.4rem;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1h-7zM1 1h5v1h-5zM2 2h3v1h-3zM3 3h1v1h-1z' fill='%231b1b2f'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.25rem center;
+  background-size: 14px 8px;
+  color: inherit;
+  font: inherit;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0 rgba(27, 27, 47, 0.14);
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+.priority-select:hover {
+  background-color: #e9e3d0;
+}
+
+.priority-select:focus {
+  outline: 3px solid var(--outline);
+  outline-offset: 2px;
+  background-color: #fff;
+}
+
+/* The picker in the add form is the same control at input size. */
+.new-todo-priority {
+  padding: 0.6rem 2rem 0.6rem 0.6rem;
+  border-width: 3px;
+  font-size: 0.8125rem;
+  background-position: right 0.5rem center;
+  background-size: 21px 12px;
+}
+
 .new-todo-input,
 .edit-input,
 .search-input {
@@ -252,6 +295,34 @@ h1 {
   image-rendering: pixelated;
 }
 
+/* Priority marker: 8x8 of flat colour inside a 3px ink frame, so it reads as a
+   block of pixels rather than an icon. Only the fill changes with the priority. */
+.priority-marker {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--ink);
+  background: var(--muted);
+  box-shadow: 2px 2px 0 rgba(27, 27, 47, 0.22);
+}
+
+.priority-marker.priority-low {
+  background: #2f8f5b;
+}
+
+.priority-marker.priority-normal {
+  background: var(--accent);
+}
+
+.priority-marker.priority-high {
+  background: var(--danger);
+}
+
+/* Done rows step back visually, marker included. */
+.todo.done .priority-marker {
+  opacity: 0.5;
+}
+
 .todo-text {
   flex: 1;
   overflow-wrap: anywhere;
@@ -317,6 +388,19 @@ h1 {
     font-size: 0.75rem;
     padding-right: 1.9rem;
     background-position: right 0.4rem center;
+  }
+
+  .new-todo-priority {
+    font-size: 0.75rem;
+    padding: 0.5rem 1.6rem 0.5rem 0.4rem;
+    background-position: right 0.3rem center;
+    background-size: 14px 8px;
+  }
+
+  /* Keep the row menu narrow enough that the todo text still gets room. */
+  .todo-priority {
+    padding: 0.25rem 1.1rem 0.25rem 0.3rem;
+    background-position: right 0.15rem center;
   }
 }
 
