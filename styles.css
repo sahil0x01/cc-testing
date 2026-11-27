@@ -85,6 +85,13 @@ h1 {
   text-transform: uppercase;
 }
 
+/* Wrapper is hidden (not just the button) so a hidden control leaves no gap. */
+.bulk-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
 .sort-select {
   flex: 1;
   min-width: 0;
