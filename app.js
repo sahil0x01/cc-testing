@@ -337,8 +337,8 @@
     var marker = document.createElement('span');
     marker.className = 'todo-priority todo-priority-' + todo.priority;
     marker.setAttribute('role', 'img');
-    marker.setAttribute('aria-label', 'Priority: ' + PRIORITY_LABELS[todo.priority]);
-    marker.title = 'Priority: ' + PRIORITY_LABELS[todo.priority];
+    marker.setAttribute('aria-label', PRIORITY_LABELS[todo.priority] + ' priority');
+    marker.title = PRIORITY_LABELS[todo.priority] + ' priority';
     return marker;
   }
 
