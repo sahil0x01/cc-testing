@@ -350,6 +350,41 @@
       return item;
     }
 
+    // Awaiting confirmation: the row becomes a question with Delete / Cancel.
+    if (confirmId === todo.id) {
+      var confirmRow = document.createElement('div');
+      confirmRow.className = 'todo-confirm';
+
+      var question = document.createElement('span');
+      question.className = 'todo-confirm-text';
+      question.id = 'confirm-delete-' + todo.id;
+      question.textContent = 'Delete "' + todo.text + '"?';
+
+      confirmRow.setAttribute('role', 'group');
+      confirmRow.setAttribute('aria-labelledby', question.id);
+      // Escape matches the rest of the app: it backs out of whatever is open.
+      confirmRow.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          cancelDelete();
+        }
+      });
+
+      confirmRow.appendChild(question);
+      confirmRow.appendChild(
+        makeButton('Delete', 'btn btn-danger', function () {
+          confirmDelete(todo.id);
+        })
+      );
+      confirmRow.appendChild(
+        makeButton('Cancel', 'btn todo-confirm-cancel', function () {
+          cancelDelete();
+        })
+      );
+      item.appendChild(confirmRow);
+      return item;
+    }
+
     var checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'todo-checkbox';
@@ -404,6 +439,12 @@
       if (editInput && !editInput.closest('.todo').hidden && !focusIsElsewhere()) {
         editInput.focus();
         editInput.select();
+      }
+    } else if (confirmId) {
+      // Put focus on Cancel, the safe answer, so Enter does not delete by accident.
+      var cancelButton = list.querySelector('.todo-confirm-cancel');
+      if (cancelButton && !cancelButton.closest('.todo').hidden && !focusIsElsewhere()) {
+        cancelButton.focus();
       }
     }
   }
