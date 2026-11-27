@@ -43,6 +43,12 @@
         </select>
       </div>
 
+      <div class="filters" role="group" aria-label="Filter todos">
+        <button type="button" class="btn filter-btn" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="btn filter-btn" data-filter="active" aria-pressed="false">Active</button>
+        <button type="button" class="btn filter-btn" data-filter="done" aria-pressed="false">Done</button>
+      </div>
+
       <ul id="todo-list" class="todo-list"></ul>
       <p id="empty-state" class="empty-state">Nothing to do yet.</p>
       <p id="todo-count" class="todo-count"></p>
