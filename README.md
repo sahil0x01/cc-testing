@@ -35,3 +35,9 @@ python3 -m http.server 8000   # then visit http://localhost:8000
   created/updated timestamps as a tooltip. Todos saved before timestamps existed
   are not lost: their creation time is recovered from the old id and they keep
   insertion order when it cannot be.
+
+## Limits
+
+Todos are stored only in this browser (in `localStorage`). They are not synced to
+a server or across devices, so clearing site data, using a different browser or
+profile, or browsing in a private window means starting from an empty list.
