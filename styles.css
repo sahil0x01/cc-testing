@@ -118,6 +118,28 @@ h1 {
   background-color: #fff;
 }
 
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-btn {
+  flex: 1;
+  padding-inline: 0.5rem;
+}
+
+/* The pressed button is the current filter; it keeps the accent fill on hover. */
+.filter-btn[aria-pressed="true"] {
+  background: var(--accent);
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.filter-btn[aria-pressed="true"]:hover {
+  background: var(--accent-dark);
+}
+
 .new-todo-input,
 .edit-input,
 .search-input {
