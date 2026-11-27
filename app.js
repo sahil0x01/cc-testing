@@ -16,6 +16,8 @@
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
+  var bulkActions = document.getElementById('bulk-actions');
+  var markAllDoneBtn = document.getElementById('mark-all-done');
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
@@ -155,6 +157,28 @@
     return todo;
   }
 
+  // Checks every todo, filtered-out rows included, since the button is offered as
+  // "mark all". One shared timestamp keeps their relative order under the sort.
+  function markAllDone() {
+    var now = Date.now();
+    var changed = false;
+    todos.forEach(function (todo) {
+      if (todo.done) return;
+      todo.done = true;
+      todo.updatedAt = now;
+      changed = true;
+    });
+    if (!changed) return;
+    save();
+    render();
+  }
+
+  function remainingCount() {
+    return todos.filter(function (todo) {
+      return !todo.done;
+    }).length;
+  }
+
   function stopEditing() {
     editingId = null;
     editDraft = null;
@@ -202,9 +226,7 @@
       : 'Nothing to do yet.';
     emptyState.hidden = shown > 0;
 
-    var remaining = todos.filter(function (todo) {
-      return !todo.done;
-    }).length;
+    var remaining = remainingCount();
     if (todos.length === 0) {
       countEl.textContent = '';
     } else if (searching) {
@@ -216,6 +238,9 @@
 
     // Only offer Clear when the box holds something that actually filters.
     searchClear.hidden = !searching;
+
+    // Nothing left to tick, so the bulk action disappears along with its wrapper.
+    bulkActions.hidden = remaining === 0;
   }
 
   function setQuery(value) {
