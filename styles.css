@@ -282,6 +282,13 @@ h1 {
   letter-spacing: 0.04em;
 }
 
+/* Footer row holding the destructive bulk action. */
+.bulk {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.9rem;
+}
+
 @media (max-width: 26rem) {
   body {
     padding: 1rem 0.5rem;
