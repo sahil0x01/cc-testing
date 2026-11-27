@@ -346,6 +346,8 @@
     );
     actions.appendChild(
       makeButton('Delete', 'btn btn-danger', function () {
+        // Deleting cannot be undone, so always ask before removing the todo.
+        if (!window.confirm('Delete "' + todo.text + '"?')) return;
         deleteTodo(todo.id);
       })
     );
