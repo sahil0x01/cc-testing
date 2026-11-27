@@ -45,7 +45,15 @@
 
       <ul id="todo-list" class="todo-list"></ul>
       <p id="empty-state" class="empty-state">Nothing to do yet.</p>
-      <p id="todo-count" class="todo-count"></p>
+
+      <div class="footer">
+        <p id="todo-count" class="todo-count"></p>
+        <button type="button" id="toggle-all" class="btn" hidden>Mark all done</button>
+        <button type="button" id="clear-completed" class="btn btn-danger" hidden>
+          Clear completed
+        </button>
+        <button type="button" id="undo-delete" class="btn" hidden>Undo</button>
+      </div>
     </main>
 
     <script src="app.js"></script>

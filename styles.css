@@ -282,6 +282,27 @@ h1 {
   letter-spacing: 0.04em;
 }
 
+/* Status line on the left, the bulk buttons on the right. Each button only shows
+   when it can act, and the row wraps instead of squashing them on narrow screens. */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.footer .todo-count {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.footer .btn {
+  flex: 0 0 auto;
+}
+
 @media (max-width: 26rem) {
   body {
     padding: 1rem 0.5rem;
@@ -300,6 +321,7 @@ h1 {
 
   .search,
   .sort,
+  .footer,
   .todo,
   .todo-actions,
   .todo-edit {
