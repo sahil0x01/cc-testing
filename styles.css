@@ -70,6 +70,14 @@ h1 {
   margin-bottom: 1rem;
 }
 
+/* Character counter: sits tight under the new-todo field, above the search row. */
+.new-todo-count {
+  margin: -0.6rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
 .search,
 .sort {
   display: flex;
