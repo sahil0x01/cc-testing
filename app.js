@@ -443,10 +443,12 @@
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     var added = addTodo(input.value);
-    // Don't let a new todo vanish into an active filter the user forgot about.
-    if (added && !matchesQuery(added)) {
+    // Don't let a new todo vanish into an active search or filter the user forgot
+    // about: a new row is never done, so a Done filter would hide it too.
+    if (added && !matches(added)) {
       searchInput.value = '';
-      setQuery('');
+      query = '';
+      setFilter(DEFAULT_FILTER);
     }
     input.value = '';
     input.focus();
@@ -474,7 +476,14 @@
     setSort(sortSelect.value);
   });
 
+  for (var b = 0; b < filterButtons.length; b++) {
+    filterButtons[b].addEventListener('click', function (event) {
+      setFilter(event.currentTarget.dataset.filter);
+    });
+  }
+
   // Reflect the stored sort mode in the select before the first render.
   sortSelect.value = sort;
+  syncFilterButtons();
   render();
 })();
