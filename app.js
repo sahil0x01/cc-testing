@@ -486,7 +486,15 @@
     setSort(sortSelect.value);
   });
 
+  // One listener for the whole group; the pressed state is the source of truth.
+  for (var b = 0; b < filterButtons.length; b++) {
+    filterButtons[b].addEventListener('click', function (event) {
+      setFilter(event.currentTarget.dataset.filter);
+    });
+  }
+
   // Reflect the stored sort mode in the select before the first render.
   sortSelect.value = sort;
+  syncFilterButtons();
   render();
 })();

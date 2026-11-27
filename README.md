@@ -27,6 +27,12 @@ python3 -m http.server 8000   # then visit http://localhost:8000
   it, Escape in the box does the same, and the status line reports how many rows
   are showing. Adding a todo that does not match the active filter clears the
   filter so the new row is never invisible.
+- Filter: the All / Active / Done buttons above the list show every todo, only the
+  ones still to do, or only the finished ones. The pressed button is marked with
+  `aria-pressed`, and the status line reports how many rows are showing. The filter
+  combines with the search box (both must match) and only hides rows in place, so it
+  never disturbs the order the Sort menu sets or an edit in progress. Adding a todo
+  while the Done filter is on switches back to All, so the new row is never invisible.
 - Sort: the Sort menu orders the list by creation date (newest or oldest first)
   or last-updated date (newest or oldest first). Every todo stores when it was
   created and when it was last changed (text edits and done/undone toggles bump
