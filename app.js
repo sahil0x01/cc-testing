@@ -8,8 +8,15 @@
   var SORT_MODES = ['created-asc', 'created-desc', 'updated-desc', 'updated-asc'];
   var DEFAULT_SORT = 'created-asc';
 
+  // Every priority a todo may have; anything else stored falls back to normal, so
+  // todos saved before priorities existed load with the default.
+  var PRIORITIES = ['low', 'normal', 'high'];
+  var DEFAULT_PRIORITY = 'normal';
+  var PRIORITY_LABELS = { low: 'Low', normal: 'Normal', high: 'High' };
+
   var form = document.getElementById('new-todo-form');
   var input = document.getElementById('new-todo-input');
+  var priorityInput = document.getElementById('new-todo-priority');
   var searchInput = document.getElementById('search-input');
   var searchClear = document.getElementById('search-clear');
   var sortSelect = document.getElementById('sort-select');
