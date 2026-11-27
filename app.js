@@ -21,6 +21,8 @@
   var editingId = null;
   // Unsaved edit text, kept across the re-render caused by any other action.
   var editDraft = null;
+  // The todo whose Delete button was pressed and is waiting for confirmation.
+  var confirmId = null;
   // Raw search box value; empty means "show everything".
   var query = '';
   // One of SORT_MODES: which timestamp orders the list, and in which direction.
@@ -150,6 +152,7 @@
       return item.id !== id;
     });
     if (editingId === id) stopEditing();
+    if (confirmId === id) confirmId = null;
     save();
     render();
     return todo;
@@ -158,6 +161,31 @@
   function stopEditing() {
     editingId = null;
     editDraft = null;
+  }
+
+  // Deleting is the one action that cannot be undone, so it takes two clicks:
+  // Delete asks, and only the confirmation itself removes the todo.
+  function askDelete(id) {
+    if (!find(id)) return null;
+    stopEditing();
+    confirmId = id;
+    render();
+    return find(id);
+  }
+
+  function cancelDelete() {
+    var id = confirmId;
+    if (id === null) return null;
+    confirmId = null;
+    render();
+    // Put focus back on the Delete button of the row that was asking.
+    var button = id && list.querySelector('.todo[data-id="' + id + '"] .btn-danger');
+    if (button) button.focus();
+    return id;
+  }
+
+  function confirmDelete(id) {
+    return deleteTodo(id);
   }
 
   /* ---------- search ---------- */
@@ -322,6 +350,41 @@
       return item;
     }
 
+    // Awaiting confirmation: the row becomes a question with Delete / Cancel.
+    if (confirmId === todo.id) {
+      var confirmRow = document.createElement('div');
+      confirmRow.className = 'todo-confirm';
+
+      var question = document.createElement('span');
+      question.className = 'todo-confirm-text';
+      question.id = 'confirm-delete-' + todo.id;
+      question.textContent = 'Delete "' + todo.text + '"?';
+
+      confirmRow.setAttribute('role', 'group');
+      confirmRow.setAttribute('aria-labelledby', question.id);
+      // Escape matches the rest of the app: it backs out of whatever is open.
+      confirmRow.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          cancelDelete();
+        }
+      });
+
+      confirmRow.appendChild(question);
+      confirmRow.appendChild(
+        makeButton('Delete', 'btn btn-danger', function () {
+          confirmDelete(todo.id);
+        })
+      );
+      confirmRow.appendChild(
+        makeButton('Cancel', 'btn todo-confirm-cancel', function () {
+          cancelDelete();
+        })
+      );
+      item.appendChild(confirmRow);
+      return item;
+    }
+
     var checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'todo-checkbox';
@@ -341,12 +404,13 @@
       makeButton('Edit', 'btn', function () {
         editingId = todo.id;
         editDraft = null;
+        confirmId = null;
         render();
       })
     );
     actions.appendChild(
       makeButton('Delete', 'btn btn-danger', function () {
-        deleteTodo(todo.id);
+        askDelete(todo.id);
       })
     );
 
@@ -375,6 +439,12 @@
       if (editInput && !editInput.closest('.todo').hidden && !focusIsElsewhere()) {
         editInput.focus();
         editInput.select();
+      }
+    } else if (confirmId) {
+      // Put focus on Cancel, the safe answer, so Enter does not delete by accident.
+      var cancelButton = list.querySelector('.todo-confirm-cancel');
+      if (cancelButton && !cancelButton.closest('.todo').hidden && !focusIsElsewhere()) {
+        cancelButton.focus();
       }
     }
   }
