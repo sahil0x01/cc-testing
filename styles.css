@@ -66,6 +66,7 @@ h1 {
 
 .new-todo {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
 }
@@ -161,6 +162,12 @@ h1 {
   outline: 3px solid var(--outline);
   outline-offset: 2px;
   background: #fff;
+}
+
+/* On very narrow screens the field and the Add todo button no longer fit side
+   by side, so the button wraps onto its own line instead of crushing the field. */
+.new-todo-input {
+  flex: 1 1 8rem;
 }
 
 .btn {
