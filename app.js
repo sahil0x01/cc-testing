@@ -29,6 +29,8 @@
   var editingId = null;
   // Unsaved edit text, kept across the re-render caused by any other action.
   var editDraft = null;
+  // Id of the row whose priority menu must get focus back after a re-render.
+  var priorityFocusId = null;
   // Raw search box value; empty means "show everything".
   var query = '';
   // One of SORT_MODES: which timestamp orders the list, and in which direction.
@@ -57,6 +59,10 @@
 
   function isTime(value) {
     return typeof value === 'number' && isFinite(value) && value > 0;
+  }
+
+  function normalisePriority(value) {
+    return PRIORITIES.indexOf(value) === -1 ? DEFAULT_PRIORITY : value;
   }
 
   // Todos saved before timestamps existed were given ids of the form
@@ -89,6 +95,7 @@
           id: todo.id,
           text: todo.text,
           done: todo.done === true,
+          priority: normalisePriority(todo.priority),
           createdAt: createdAt,
           updatedAt: isTime(todo.updatedAt) ? todo.updatedAt : createdAt,
         };
@@ -116,11 +123,18 @@
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
-  function addTodo(text) {
+  function addTodo(text, priority) {
     text = String(text || '').trim();
     if (!text) return null;
     var now = Date.now();
-    var todo = { id: newId(), text: text, done: false, createdAt: now, updatedAt: now };
+    var todo = {
+      id: newId(),
+      text: text,
+      done: false,
+      priority: normalisePriority(priority),
+      createdAt: now,
+      updatedAt: now,
+    };
     todos.push(todo);
     save();
     render();
@@ -148,6 +162,24 @@
     todo.updatedAt = Date.now();
     save();
     render();
+    return todo;
+  }
+
+  // Changing the priority is an edit like any other, so it bumps the updated time
+  // and can therefore move the row when sorting by "Updated".
+  function setPriority(id, priority) {
+    var todo = find(id);
+    if (!todo) return null;
+    var next = normalisePriority(priority);
+    if (todo.priority !== next) {
+      todo.priority = next;
+      todo.updatedAt = Date.now();
+      // The row is re-rendered, which replaces the menu that fired this event.
+      priorityFocusId = id;
+      save();
+      render();
+      priorityFocusId = null;
+    }
     return todo;
   }
 
