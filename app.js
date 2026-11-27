@@ -202,16 +202,18 @@
       : 'Nothing to do yet.';
     emptyState.hidden = shown > 0;
 
-    var remaining = todos.filter(function (todo) {
-      return !todo.done;
+    var completed = todos.filter(function (todo) {
+      return todo.done;
     }).length;
+    var remaining = todos.length - completed;
     if (todos.length === 0) {
       countEl.textContent = '';
     } else if (searching) {
       countEl.textContent =
         'Showing ' + shown + ' of ' + todos.length + ' · ' + remaining + ' of ' + todos.length + ' left';
     } else {
-      countEl.textContent = remaining + ' of ' + todos.length + ' left';
+      // Totals cover every todo, not just the rows currently shown.
+      countEl.textContent = todos.length + ' todos, ' + completed + ' completed';
     }
 
     // Only offer Clear when the box holds something that actually filters.
