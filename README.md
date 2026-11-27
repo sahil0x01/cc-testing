@@ -21,6 +21,9 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 - Read: the list is rendered from `localStorage`, so todos survive reloads
 - Update: check the box to toggle done, or use Edit (Enter saves, Escape cancels)
 - Delete: the Delete button on each row
+- Mark all done: the "Mark all done" button above the list checks every todo in one
+  click (including rows hidden by the active search). It is hidden once nothing is
+  left to mark, i.e. when no todo is undone.
 - Search: the search box filters the list by text as you type (case-insensitive
   substring match). Rows are hidden in place rather than re-rendered, so typing a
   query never disturbs an edit in progress or the focus in the box. Clear empties
