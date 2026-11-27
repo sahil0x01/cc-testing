@@ -1,6 +1,7 @@
 # Prefill Todos
 
 A basic client-side todo app: plain HTML, CSS and JavaScript with no build step or dependencies.
+Todos are stored only in this browser.
 
 The interface is deliberately pixelated: square corners, chunky 3px borders, hard offset
 shadows, a dithered checkerboard background, no font smoothing, and a hand-plotted 5x5
