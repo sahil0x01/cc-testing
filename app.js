@@ -452,6 +452,10 @@
     setSort(sortSelect.value);
   });
 
+  markAllDoneBtn.addEventListener('click', function () {
+    markAllDone();
+  });
+
   // Reflect the stored sort mode in the select before the first render.
   sortSelect.value = sort;
   render();
