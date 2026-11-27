@@ -511,6 +511,8 @@
       setQuery('');
     }
     input.value = '';
+    // The picker goes back to normal too, so the next todo starts from the default.
+    priorityInput.value = DEFAULT_PRIORITY;
     input.focus();
   });
 

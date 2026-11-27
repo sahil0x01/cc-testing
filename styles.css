@@ -328,7 +328,8 @@ h1 {
 }
 
 .todo-text {
-  flex: 1;
+  /* 8rem of text before the actions are allowed to wrap below it. */
+  flex: 1 1 8rem;
   overflow-wrap: anywhere;
 }
 
@@ -341,6 +342,8 @@ h1 {
 .todo-actions {
   display: flex;
   gap: 0.5rem;
+  /* Stay right-aligned, on the same line as the text when it fits. */
+  margin-left: auto;
 }
 
 .todo-edit {
@@ -407,18 +410,8 @@ h1 {
     background-position: right 0.15rem center;
   }
 
-  /* Four controls plus a marker no longer fit beside readable text, so let the
-     actions drop onto their own right-aligned line instead of squeezing it. */
-  .todo {
-    flex-wrap: wrap;
-  }
-
   .todo-text {
-    flex: 1 1 8rem;
-  }
-
-  .todo-actions {
-    margin-left: auto;
+    flex-basis: 7rem;
   }
 }
 
