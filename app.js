@@ -17,6 +17,10 @@
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
   var clearAllButton = document.getElementById('clear-all');
+  var copyAllButton = document.getElementById('copy-all');
+  // The button's resting label, restored once the copy feedback has faded.
+  var copyAllLabel = copyAllButton.textContent;
+  var copyAllTimer = null;
 
   // The todo being edited, or null when no row is in edit mode.
   var editingId = null;
