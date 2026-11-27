@@ -25,7 +25,9 @@ python3 -m http.server 8000   # then visit http://localhost:8000
   substring match). Rows are hidden in place rather than re-rendered, so typing a
   query never disturbs an edit in progress or the focus in the box. Clear empties
   it, Escape in the box does the same, and the status line reports how many rows
-  are showing. Adding a todo that does not match the active filter clears the
+  are showing. The status line under the list always reports the totals, for
+  example `5 todos, 2 completed`, and keeps the `Showing … of …` wording while a
+  search is active. Adding a todo that does not match the active filter clears the
   filter so the new row is never invisible.
 - Sort: the Sort menu orders the list by creation date (newest or oldest first)
   or last-updated date (newest or oldest first). Every todo stores when it was

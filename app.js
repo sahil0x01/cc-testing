@@ -205,13 +205,16 @@
     var remaining = todos.filter(function (todo) {
       return !todo.done;
     }).length;
+    var completed = todos.length - remaining;
     if (todos.length === 0) {
       countEl.textContent = '';
     } else if (searching) {
       countEl.textContent =
-        'Showing ' + shown + ' of ' + todos.length + ' · ' + remaining + ' of ' + todos.length + ' left';
+        'Showing ' + shown + ' of ' + todos.length + ' · ' + remaining + ' of ' + todos.length + ' left · ' +
+        completed + ' completed';
     } else {
-      countEl.textContent = remaining + ' of ' + todos.length + ' left';
+      countEl.textContent =
+        todos.length + (todos.length === 1 ? ' todo, ' : ' todos, ') + completed + ' completed';
     }
 
     // Only offer Clear when the box holds something that actually filters.
