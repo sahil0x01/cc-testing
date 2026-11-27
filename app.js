@@ -511,8 +511,9 @@
       setQuery('');
     }
     input.value = '';
-    // The picker goes back to normal too, so the next todo starts from the default.
-    priorityInput.value = DEFAULT_PRIORITY;
+    // After a real add the picker goes back to normal, so the next todo starts from
+    // the default; an empty submit leaves the chosen priority alone.
+    if (added) priorityInput.value = DEFAULT_PRIORITY;
     input.focus();
   });
 
