@@ -402,6 +402,20 @@ h1 {
     padding: 0.25rem 1.1rem 0.25rem 0.3rem;
     background-position: right 0.15rem center;
   }
+
+  /* Four controls plus a marker no longer fit beside readable text, so let the
+     actions drop onto their own right-aligned line instead of squeezing it. */
+  .todo {
+    flex-wrap: wrap;
+  }
+
+  .todo-text {
+    flex: 1 1 8rem;
+  }
+
+  .todo-actions {
+    margin-left: auto;
+  }
 }
 
 [hidden] {
