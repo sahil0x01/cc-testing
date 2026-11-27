@@ -461,5 +461,6 @@
 
   // Reflect the stored sort mode in the select before the first render.
   sortSelect.value = sort;
+  updateCharCount();
   render();
 })();
