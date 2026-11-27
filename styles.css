@@ -209,6 +209,13 @@ h1 {
   color: #fff;
 }
 
+/* Bulk action: a full-width row of its own above the list. */
+.btn-bulk {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
 .todo-list {
   margin: 0;
   padding: 0;
