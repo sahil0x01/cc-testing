@@ -410,10 +410,11 @@
 
   /* ---------- events ---------- */
 
-  // Live character count for the new-todo field; 0 once the field is emptied.
+  // Live character count for the new-todo field; an empty field reads lighter than a typed one.
   function updateCharCount() {
     var length = input.value.length;
     charCount.textContent = length + (length === 1 ? ' character' : ' characters');
+    charCount.classList.toggle('is-empty', length === 0);
   }
 
   form.addEventListener('submit', function (event) {
