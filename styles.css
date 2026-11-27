@@ -258,8 +258,12 @@ h1 {
   list-style: none;
 }
 
+/* The controls in a row cannot shrink, so the row may wrap: when a long todo on a
+   narrow screen needs the space, the actions drop onto their own right-aligned line
+   instead of squeezing the text down to a few characters per line. */
 .todo {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.6rem;
   padding: 0.6rem 0;
