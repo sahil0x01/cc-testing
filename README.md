@@ -18,7 +18,8 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 ## Features
 
 - Create: type in the input and press Add (or Enter). A character counter under
-  the field shows how much has been typed and resets when the todo is added
+  the field shows how much has been typed (dimmed while the field is empty) and
+  resets when the todo is added
 - Read: the list is rendered from `localStorage`, so todos survive reloads
 - Update: check the box to toggle done, or use Edit (Enter saves, Escape cancels)
 - Delete: the Delete button on each row
