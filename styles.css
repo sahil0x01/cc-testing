@@ -274,6 +274,20 @@ h1 {
   gap: 0.5rem;
 }
 
+.todo-confirm {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.todo-confirm-text {
+  flex: 1;
+  overflow-wrap: anywhere;
+  /* Same red as the Delete button that asked the question. */
+  color: var(--danger);
+}
+
 .empty-state,
 .todo-count {
   margin: 0.9rem 0 0;
@@ -302,7 +316,8 @@ h1 {
   .sort,
   .todo,
   .todo-actions,
-  .todo-edit {
+  .todo-edit,
+  .todo-confirm {
     gap: 0.4rem;
   }
 
