@@ -38,3 +38,5 @@ python3 -m http.server 8000   # then visit http://localhost:8000
   created/updated timestamps as a tooltip. Todos saved before timestamps existed
   are not lost: their creation time is recovered from the old id and they keep
   insertion order when it cannot be.
+- Footer: a small, muted "Micro memory test" line sits at the bottom of the card,
+  under the Clear all row, separated by a dashed rule.
