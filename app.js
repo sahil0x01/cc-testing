@@ -161,6 +161,19 @@
     editDraft = null;
   }
 
+  // Wipes the whole list, filter or not, after an explicit confirmation.
+  function clearAllTodos() {
+    if (todos.length === 0) return false;
+    if (!window.confirm('Delete all ' + todos.length + ' todo' + (todos.length === 1 ? '' : 's') + '? This cannot be undone.')) {
+      return false;
+    }
+    todos = [];
+    stopEditing();
+    save();
+    render();
+    return true;
+  }
+
   /* ---------- search ---------- */
 
   // Normalised query: trimmed and lower-cased, so matching ignores case and padding.
@@ -217,6 +230,8 @@
 
     // Only offer Clear when the box holds something that actually filters.
     searchClear.hidden = !searching;
+    // Nothing to clear once the list is empty.
+    clearAllButton.hidden = todos.length === 0;
   }
 
   function setQuery(value) {
@@ -422,6 +437,10 @@
     searchInput.value = '';
     setQuery('');
     searchInput.focus();
+  });
+
+  clearAllButton.addEventListener('click', function () {
+    clearAllTodos();
   });
 
   sortSelect.addEventListener('change', function () {
