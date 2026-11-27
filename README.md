@@ -17,7 +17,7 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 
 ## Features
 
-- Create: type in the input and press Add (or Enter)
+- Create: type in the input and press Add todo (or Enter)
 - Read: the list is rendered from `localStorage`, so todos survive reloads
 - Update: check the box to toggle done, or use Edit (Enter saves, Escape cancels)
 - Delete: the Delete button on each row
