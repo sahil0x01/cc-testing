@@ -234,8 +234,9 @@
 
     // Only offer Clear when the box holds something that actually filters.
     searchClear.hidden = !searching;
-    // Nothing to clear once the list is empty.
+    // Nothing to clear or copy once the list is empty.
     clearAllButton.hidden = todos.length === 0;
+    copyAllButton.hidden = todos.length === 0;
   }
 
   function setQuery(value) {
@@ -280,6 +281,73 @@
     sortSelect.value = sort;
     saveSort();
     render();
+  }
+
+  /* ---------- clipboard ---------- */
+
+  // The list as plain text: one todo per line, in the order currently on screen,
+  // with a marker so the done state survives the copy.
+  function buildPlainText() {
+    return sortedTodos()
+      .map(function (todo) {
+        return (todo.done ? '[x] ' : '[ ] ') + todo.text;
+      })
+      .join('\n');
+  }
+
+  // Fallback for browsers without the async clipboard API, which is unavailable on
+  // pages opened straight from disk (file://), one of the README's run options.
+  function legacyCopy(text) {
+    var area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    // Parked off-screen rather than hidden: a display:none field cannot be selected.
+    area.style.position = 'fixed';
+    area.style.top = '-1000px';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    area.setSelectionRange(0, text.length);
+    var copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch (err) {
+      copied = false;
+    }
+    document.body.removeChild(area);
+    return copied;
+  }
+
+  // Resolves to whether the text made it onto the clipboard.
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(
+        function () {
+          return true;
+        },
+        function () {
+          return legacyCopy(text);
+        }
+      );
+    }
+    return Promise.resolve(legacyCopy(text));
+  }
+
+  // Brief label swap on the button itself, so the copy is confirmed where it happened.
+  function flashCopyLabel(message) {
+    copyAllButton.textContent = message;
+    window.clearTimeout(copyAllTimer);
+    copyAllTimer = window.setTimeout(function () {
+      copyAllButton.textContent = copyAllLabel;
+    }, 1500);
+  }
+
+  // Copies every todo, filter or not, in the order shown.
+  function copyAllTodos() {
+    if (todos.length === 0) return;
+    copyText(buildPlainText()).then(function (copied) {
+      flashCopyLabel(copied ? 'Copied!' : 'Copy failed');
+    });
   }
 
   /* ---------- rendering ---------- */
@@ -445,6 +513,10 @@
 
   clearAllButton.addEventListener('click', function () {
     clearAllTodos();
+  });
+
+  copyAllButton.addEventListener('click', function () {
+    copyAllTodos();
   });
 
   sortSelect.addEventListener('change', function () {

@@ -282,9 +282,10 @@ h1 {
   letter-spacing: 0.04em;
 }
 
-/* Footer row holding the destructive bulk action. */
+/* Footer row holding the bulk actions. */
 .bulk {
   display: flex;
+  gap: 0.5rem;
   justify-content: flex-end;
   margin-top: 0.9rem;
 }
