@@ -1,0 +1,1 @@
+echo agents-setup-ran > /tmp/agents-setup
