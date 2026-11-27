@@ -8,8 +8,15 @@
   var SORT_MODES = ['created-asc', 'created-desc', 'updated-desc', 'updated-asc'];
   var DEFAULT_SORT = 'created-asc';
 
+  // Priority levels, lowest first. Anything else stored (or missing, in todos
+  // saved before priorities existed) is treated as normal.
+  var PRIORITIES = ['low', 'normal', 'high'];
+  var DEFAULT_PRIORITY = 'normal';
+  var PRIORITY_LABELS = { low: 'Low', normal: 'Normal', high: 'High' };
+
   var form = document.getElementById('new-todo-form');
   var input = document.getElementById('new-todo-input');
+  var prioritySelect = document.getElementById('new-todo-priority');
   var searchInput = document.getElementById('search-input');
   var searchClear = document.getElementById('search-clear');
   var sortSelect = document.getElementById('sort-select');
@@ -22,6 +29,8 @@
   var editingId = null;
   // Unsaved edit text, kept across the re-render caused by any other action.
   var editDraft = null;
+  // Unsaved edit priority, kept alongside the text draft.
+  var priorityDraft = null;
   // Raw search box value; empty means "show everything".
   var query = '';
   // One of SORT_MODES: which timestamp orders the list, and in which direction.
