@@ -7,6 +7,11 @@ shadows, a dithered checkerboard background, no font smoothing, and a hand-plott
 pixel checkbox tick. All of it is CSS plus one tiny inline SVG, so there are no webfonts
 or image files to load.
 
+It follows the operating system colour scheme: a `prefers-color-scheme: dark` block swaps
+the colour tokens (ink, paper, panel, accents, the dither, the inset shadows) and the two
+inline pixel-art SVGs are recoloured to match, so the dark theme keeps the same blocky
+look. There is no toggle to manage — flip the OS setting and the page repaints.
+
 ## Run
 
 Open `index.html` in a browser, or serve the folder:
