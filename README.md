@@ -21,6 +21,12 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 - Create: type in the input and press Add (or Enter)
 - Read: the list is rendered from `localStorage`, so todos survive reloads
 - Update: check the box to toggle done, or use Edit (Enter saves, Escape cancels)
+- Priority: every todo is low, normal (the default) or high. The menu next to the
+  new-todo field picks the level when adding, Edit changes it on an existing row,
+  and each row shows a small pixel marker (a bordered square whose bar grows with
+  the level, one block low, two normal, three high, in a matching colour). The
+  level is stored with the todo, so it survives a reload; todos saved before
+  priorities existed load unchanged and count as normal.
 - Delete: the Delete button on each row
 - Clear all: the Clear all button at the bottom removes every todo, matching the
   search filter or not. It asks for confirmation first, and it is hidden while the

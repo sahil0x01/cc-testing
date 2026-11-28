@@ -118,6 +118,38 @@ h1 {
   background-color: #fff;
 }
 
+/* Priority menus share the square, hand-drawn look of the sort menu. */
+.priority-select {
+  flex: 0 0 auto;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0.6rem 1.7rem 0.6rem 0.6rem;
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background-color: var(--paper);
+  /* The same pixel down-arrow as the sort menu, drawn at 2x instead of 3x. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1h-7zM1 1h5v1h-5zM2 2h3v1h-3zM3 3h1v1h-1z' fill='%231b1b2f'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.45rem center;
+  background-size: 14px 8px;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8125rem;
+  box-shadow: inset 3px 3px 0 rgba(27, 27, 47, 0.08);
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+.priority-select:hover {
+  background-color: #e9e3d0;
+}
+
+.priority-select:focus {
+  outline: 3px solid var(--outline);
+  outline-offset: 2px;
+  background-color: #fff;
+}
+
 .new-todo-input,
 .edit-input,
 .search-input {
@@ -252,6 +284,40 @@ h1 {
   image-rendering: pixelated;
 }
 
+/* Priority marker: a bordered square holding a pixel bar that grows with the
+   level (one block low, two normal, three high). Each level has its own colour,
+   and the bar height keeps the level readable without relying on colour alone. */
+.todo-priority {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid var(--ink);
+  background-color: var(--paper);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1rem 1rem;
+  image-rendering: pixelated;
+  box-shadow: inset 3px 3px 0 rgba(27, 27, 47, 0.08);
+}
+
+/* 4x4 pixel grid (fill matches the level colour), centred and scaled 4x. */
+.todo-priority-low {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M1 3h2v1h-2z' fill='%232f7d32'/%3E%3C/svg%3E");
+}
+
+.todo-priority-normal {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M1 2h2v2h-2z' fill='%23996a00'/%3E%3C/svg%3E");
+}
+
+.todo-priority-high {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M1 1h2v3h-2z' fill='%23b42318'/%3E%3C/svg%3E");
+}
+
+/* Completed rows keep the marker, just quieter. */
+.todo.done .todo-priority {
+  opacity: 0.55;
+}
+
 .todo-text {
   flex: 1;
   overflow-wrap: anywhere;
@@ -309,8 +375,20 @@ h1 {
   .sort,
   .todo,
   .todo-actions,
-  .todo-edit {
+  .todo-edit,
+  .new-todo {
     gap: 0.4rem;
+  }
+
+  /* The text field, priority menu and two buttons need two lines on small screens. */
+  .todo-edit {
+    flex-wrap: wrap;
+  }
+
+  .priority-select {
+    font-size: 0.75rem;
+    padding: 0.5rem 1.5rem 0.5rem 0.45rem;
+    background-position: right 0.3rem center;
   }
 
   .sort-select {
