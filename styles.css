@@ -282,6 +282,16 @@ h1 {
   letter-spacing: 0.04em;
 }
 
+/* Sits outside the panel, so it lines up with the app instead of inheriting its padding. */
+.app-footer {
+  max-width: 34rem;
+  margin: 0.9rem auto 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
 /* Footer row holding the destructive bulk action. */
 .bulk {
   display: flex;
