@@ -49,3 +49,7 @@ node scripts/stats.js scripts/sample-todos.json
 # Done: 2
 # Left: 2
 ```
+
+## Verification
+
+Checked by merge test
