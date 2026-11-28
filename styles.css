@@ -64,6 +64,14 @@ h1 {
   text-shadow: 3px 3px 0 rgba(27, 27, 47, 0.18);
 }
 
+/* Small line tucked under the heading. */
+.tagline {
+  margin: -0.9rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+}
+
 .new-todo {
   display: flex;
   gap: 0.5rem;
