@@ -8,8 +8,15 @@
   var SORT_MODES = ['created-asc', 'created-desc', 'updated-desc', 'updated-asc'];
   var DEFAULT_SORT = 'created-asc';
 
+  // Every priority a todo may have; anything else stored falls back to normal, so
+  // todos saved before priorities existed load with the default.
+  var PRIORITIES = ['low', 'normal', 'high'];
+  var DEFAULT_PRIORITY = 'normal';
+  var PRIORITY_LABELS = { low: 'Low', normal: 'Normal', high: 'High' };
+
   var form = document.getElementById('new-todo-form');
   var input = document.getElementById('new-todo-input');
+  var priorityInput = document.getElementById('new-todo-priority');
   var searchInput = document.getElementById('search-input');
   var searchClear = document.getElementById('search-clear');
   var sortSelect = document.getElementById('sort-select');
@@ -22,6 +29,8 @@
   var editingId = null;
   // Unsaved edit text, kept across the re-render caused by any other action.
   var editDraft = null;
+  // Id of the row whose priority menu must get focus back after a re-render.
+  var priorityFocusId = null;
   // Raw search box value; empty means "show everything".
   var query = '';
   // One of SORT_MODES: which timestamp orders the list, and in which direction.
@@ -50,6 +59,10 @@
 
   function isTime(value) {
     return typeof value === 'number' && isFinite(value) && value > 0;
+  }
+
+  function normalisePriority(value) {
+    return PRIORITIES.indexOf(value) === -1 ? DEFAULT_PRIORITY : value;
   }
 
   // Todos saved before timestamps existed were given ids of the form
@@ -82,6 +95,7 @@
           id: todo.id,
           text: todo.text,
           done: todo.done === true,
+          priority: normalisePriority(todo.priority),
           createdAt: createdAt,
           updatedAt: isTime(todo.updatedAt) ? todo.updatedAt : createdAt,
         };
@@ -109,11 +123,18 @@
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
-  function addTodo(text) {
+  function addTodo(text, priority) {
     text = String(text || '').trim();
     if (!text) return null;
     var now = Date.now();
-    var todo = { id: newId(), text: text, done: false, createdAt: now, updatedAt: now };
+    var todo = {
+      id: newId(),
+      text: text,
+      done: false,
+      priority: normalisePriority(priority),
+      createdAt: now,
+      updatedAt: now,
+    };
     todos.push(todo);
     save();
     render();
@@ -141,6 +162,24 @@
     todo.updatedAt = Date.now();
     save();
     render();
+    return todo;
+  }
+
+  // Changing the priority is an edit like any other, so it bumps the updated time
+  // and can therefore move the row when sorting by "Updated".
+  function setPriority(id, priority) {
+    var todo = find(id);
+    if (!todo) return null;
+    var next = normalisePriority(priority);
+    if (todo.priority !== next) {
+      todo.priority = next;
+      todo.updatedAt = Date.now();
+      // The row is re-rendered, which replaces the menu that fired this event.
+      priorityFocusId = id;
+      save();
+      render();
+      priorityFocusId = null;
+    }
     return todo;
   }
 
@@ -294,11 +333,49 @@
     return ms > 0 ? new Date(ms).toLocaleString() : 'unknown';
   }
 
+  function priorityLabel(todo) {
+    return PRIORITY_LABELS[normalisePriority(todo.priority)];
+  }
+
+  // A pixel square in the priority colour, sitting before the text.
+  function makePriorityMarker(todo) {
+    var marker = document.createElement('span');
+    marker.className = 'priority-marker priority-' + normalisePriority(todo.priority);
+    marker.setAttribute('aria-hidden', 'true');
+    marker.title = 'Priority: ' + priorityLabel(todo);
+    return marker;
+  }
+
+  // The same small menu in the add form, built once per row.
+  function makePrioritySelect(todo) {
+    var select = document.createElement('select');
+    select.className = 'priority-select todo-priority';
+    select.setAttribute('aria-label', 'Priority for "' + todo.text + '"');
+    select.title = 'Priority: ' + priorityLabel(todo);
+    PRIORITIES.forEach(function (value) {
+      var option = document.createElement('option');
+      option.value = value;
+      option.textContent = PRIORITY_LABELS[value];
+      select.appendChild(option);
+    });
+    select.value = normalisePriority(todo.priority);
+    select.addEventListener('change', function () {
+      setPriority(todo.id, select.value);
+    });
+    return select;
+  }
+
   function renderItem(todo) {
     var item = document.createElement('li');
     item.className = 'todo' + (todo.done ? ' done' : '');
     item.dataset.id = todo.id;
-    item.title = 'Created ' + formatTime(todo.createdAt) + ' · Updated ' + formatTime(todo.updatedAt);
+    item.title =
+      'Priority ' +
+      priorityLabel(todo) +
+      ' · Created ' +
+      formatTime(todo.createdAt) +
+      ' · Updated ' +
+      formatTime(todo.updatedAt);
 
     if (editingId === todo.id) {
       var editRow = document.createElement('div');
@@ -353,6 +430,7 @@
 
     var actions = document.createElement('div');
     actions.className = 'todo-actions';
+    actions.appendChild(makePrioritySelect(todo));
     actions.appendChild(
       makeButton('Edit', 'btn', function () {
         editingId = todo.id;
@@ -367,6 +445,7 @@
     );
 
     item.appendChild(checkbox);
+    item.appendChild(makePriorityMarker(todo));
     item.appendChild(text);
     item.appendChild(actions);
     return item;
@@ -393,6 +472,20 @@
         editInput.select();
       }
     }
+
+    // A priority change rebuilds the row it came from; put the caret back in that
+    // menu so keyboard users are not dropped at the top of the page.
+    if (priorityFocusId) {
+      var row = null;
+      for (var i = 0; i < list.children.length; i++) {
+        if (list.children[i].dataset.id === priorityFocusId) {
+          row = list.children[i];
+          break;
+        }
+      }
+      var menu = row && row.querySelector('.todo-priority');
+      if (menu && !row.hidden) menu.focus();
+    }
   }
 
   function commitEdit(id, text) {
@@ -411,13 +504,16 @@
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
-    var added = addTodo(input.value);
+    var added = addTodo(input.value, priorityInput.value);
     // Don't let a new todo vanish into an active filter the user forgot about.
     if (added && !matchesQuery(added)) {
       searchInput.value = '';
       setQuery('');
     }
     input.value = '';
+    // After a real add the picker goes back to normal, so the next todo starts from
+    // the default; an empty submit leaves the chosen priority alone.
+    if (added) priorityInput.value = DEFAULT_PRIORITY;
     input.focus();
   });
 
