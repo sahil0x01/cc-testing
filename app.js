@@ -10,6 +10,7 @@
 
   var form = document.getElementById('new-todo-form');
   var input = document.getElementById('new-todo-input');
+  var charCount = document.getElementById('new-todo-count');
   var searchInput = document.getElementById('search-input');
   var searchClear = document.getElementById('search-clear');
   var sortSelect = document.getElementById('sort-select');
@@ -409,6 +410,13 @@
 
   /* ---------- events ---------- */
 
+  // Live character count for the new-todo field; an empty field reads lighter than a typed one.
+  function updateCharCount() {
+    var length = input.value.length;
+    charCount.textContent = length + (length === 1 ? ' character' : ' characters');
+    charCount.classList.toggle('is-empty', length === 0);
+  }
+
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     var added = addTodo(input.value);
@@ -418,7 +426,12 @@
       setQuery('');
     }
     input.value = '';
+    updateCharCount();
     input.focus();
+  });
+
+  input.addEventListener('input', function () {
+    updateCharCount();
   });
 
   searchInput.addEventListener('input', function () {
@@ -449,5 +462,6 @@
 
   // Reflect the stored sort mode in the select before the first render.
   sortSelect.value = sort;
+  updateCharCount();
   render();
 })();

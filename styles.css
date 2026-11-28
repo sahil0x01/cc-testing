@@ -70,6 +70,20 @@ h1 {
   margin-bottom: 1rem;
 }
 
+/* Character counter: sits tight under the new-todo field, above the search row. */
+.new-todo-count {
+  margin: -0.6rem 0 1rem;
+  color: var(--ink);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+/* Empty field: the "0 characters" count stays visible but recedes into the background. */
+.new-todo-count.is-empty {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
 .search,
 .sort {
   display: flex;
