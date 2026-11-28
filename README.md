@@ -7,6 +7,13 @@ shadows, a dithered checkerboard background, no font smoothing, and a hand-plott
 pixel checkbox tick. All of it is CSS plus one tiny inline SVG, so there are no webfonts
 or image files to load.
 
+It has a light and a dark theme; there is no toggle, the app follows the operating
+system's colour-scheme setting (`prefers-color-scheme`) and switches live when it changes.
+Only the palette changes: the borders, shadows, checkerboard and pixel icons stay, with
+the ink inverting to off-white and the accent/alert colours picking up dark label text so
+contrast stays sharp. `color-scheme` is set too, so native widgets (the sort menu popup,
+scrollbars) match the theme.
+
 ## Run
 
 Open `index.html` in a browser, or serve the folder:
