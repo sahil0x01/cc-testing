@@ -1,0 +1,30 @@
+[
+  {
+    "id": "sample-1",
+    "text": "Write the stats script",
+    "done": true,
+    "createdAt": 1700000000000,
+    "updatedAt": 1700000000000
+  },
+  {
+    "id": "sample-2",
+    "text": "Add a sample todos file",
+    "done": true,
+    "createdAt": 1700000001000,
+    "updatedAt": 1700000001000
+  },
+  {
+    "id": "sample-3",
+    "text": "Try it in the browser",
+    "done": false,
+    "createdAt": 1700000002000,
+    "updatedAt": 1700000002000
+  },
+  {
+    "id": "sample-4",
+    "text": "Ship it",
+    "done": false,
+    "createdAt": 1700000003000,
+    "updatedAt": 1700000003000
+  }
+]

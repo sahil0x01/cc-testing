@@ -39,3 +39,18 @@ python3 -m http.server 8000   # then visit http://localhost:8000
   created/updated timestamps as a tooltip. Todos saved before timestamps existed
   are not lost: their creation time is recovered from the old id and they keep
   insertion order when it cannot be.
+
+## Scripts
+
+`scripts/stats.js` reads a JSON array of todos from a file and prints how many are
+done and how many are left. `scripts/sample-todos.json` is a sample input.
+
+```sh
+node scripts/stats.js scripts/sample-todos.json
+# Done: 2
+# Left: 2
+```
+
+## Verification
+
+Checked by merge test
