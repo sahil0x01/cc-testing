@@ -213,7 +213,7 @@
 
     emptyState.textContent = searching
       ? 'No todos match "' + query.trim() + '".'
-      : 'Nothing to do yet.';
+      : 'Add your first todo.';
     emptyState.hidden = shown > 0;
 
     var remaining = todos.filter(function (todo) {
