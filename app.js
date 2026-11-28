@@ -439,13 +439,11 @@
     searchInput.focus();
   });
 
-  clearAllButton.addEventListener('click', function () {
-    clearAllTodos();
-  });
-
   sortSelect.addEventListener('change', function () {
     setSort(sortSelect.value);
   });
+
+  clearAllButton.addEventListener('click', clearAllTodos);
 
   // Reflect the stored sort mode in the select before the first render.
   sortSelect.value = sort;
