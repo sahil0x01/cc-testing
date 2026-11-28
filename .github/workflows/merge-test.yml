@@ -1,0 +1,13 @@
+name: merge-test
+on: pull_request
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sleep 30
+          grep -q "Checked by merge test" docs/CHANGELOG.md || {
+            echo "docs/CHANGELOG.md must contain the line: Checked by merge test"
+            exit 1
+          }
