@@ -25,6 +25,11 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 - Clear all: the Clear all button at the bottom removes every todo, matching the
   search filter or not. It asks for confirmation first, and it is hidden while the
   list is empty.
+- Copy all: the Copy all button at the bottom puts every todo on the clipboard as
+  plain text, one per line, in the order shown and ignoring the search filter. Done
+  todos are prefixed `[x]` and open ones `[ ]`. The button briefly reads "Copied!"
+  (or "Copy failed" if the clipboard is blocked), and it is hidden while the list is
+  empty.
 - Search: the search box filters the list by text as you type (case-insensitive
   substring match). Rows are hidden in place rather than re-rendered, so typing a
   query never disturbs an edit in progress or the focus in the box. Clear empties
