@@ -209,6 +209,30 @@ h1 {
   color: #fff;
 }
 
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-btn {
+  flex: 1;
+}
+
+/* The pressed filter sinks into the page, so "which view am I in" reads at a glance. */
+.filter-btn[aria-pressed='true'],
+.filter-btn[aria-pressed='true']:hover {
+  background: var(--accent);
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.filter-btn[aria-pressed='true']:hover {
+  background: var(--accent-dark);
+}
+
 .todo-list {
   margin: 0;
   padding: 0;
@@ -307,6 +331,7 @@ h1 {
 
   .search,
   .sort,
+  .filters,
   .todo,
   .todo-actions,
   .todo-edit {

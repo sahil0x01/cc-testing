@@ -8,11 +8,16 @@
   var SORT_MODES = ['created-asc', 'created-desc', 'updated-desc', 'updated-asc'];
   var DEFAULT_SORT = 'created-asc';
 
+  // Every done/not-done filter the buttons offer; anything else is ignored.
+  var FILTERS = ['all', 'active', 'done'];
+  var DEFAULT_FILTER = 'all';
+
   var form = document.getElementById('new-todo-form');
   var input = document.getElementById('new-todo-input');
   var searchInput = document.getElementById('search-input');
   var searchClear = document.getElementById('search-clear');
   var sortSelect = document.getElementById('sort-select');
+  var filterButtons = document.querySelectorAll('.filter-btn');
   var list = document.getElementById('todo-list');
   var emptyState = document.getElementById('empty-state');
   var countEl = document.getElementById('todo-count');
@@ -24,6 +29,8 @@
   var editDraft = null;
   // Raw search box value; empty means "show everything".
   var query = '';
+  // One of FILTERS: which done state the list shows.
+  var filter = DEFAULT_FILTER;
   // One of SORT_MODES: which timestamp orders the list, and in which direction.
   var sort = loadSort();
   var todos = load();
@@ -186,11 +193,61 @@
     return needle === '' || todo.text.toLowerCase().indexOf(needle) !== -1;
   }
 
+  /* ---------- done filter ---------- */
+
+  function matchesFilter(todo) {
+    if (filter === 'active') return !todo.done;
+    if (filter === 'done') return todo.done;
+    return true;
+  }
+
+  // What decides whether a row is visible: the done filter, the search box or both.
+  function matchesView(todo) {
+    return matchesFilter(todo) && matchesQuery(todo);
+  }
+
+  function filterLabel() {
+    if (filter === 'active') return 'active';
+    if (filter === 'done') return 'done';
+    return '';
+  }
+
+  // Mark the button for the current filter, so the pressed one is also announced.
+  function syncFilterButtons() {
+    for (var i = 0; i < filterButtons.length; i++) {
+      var button = filterButtons[i];
+      var pressed = button.dataset.filter === filter;
+      button.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+      button.classList.toggle('is-active', pressed);
+    }
+  }
+
+  // A filter only hides rows, so it repaints them in place just like search does:
+  // no re-render, so an edit in progress and the focus in the search box survive.
+  function setFilter(value) {
+    filter = FILTERS.indexOf(value) === -1 ? DEFAULT_FILTER : value;
+    syncFilterButtons();
+    applyFilter();
+  }
+
+  function emptyMessage() {
+    var label = filterLabel();
+    if (searchTerm() !== '') {
+      return label
+        ? 'No ' + label + ' todos match "' + query.trim() + '".'
+        : 'No todos match "' + query.trim() + '".';
+    }
+    if (filter === 'active') return 'No active todos.';
+    if (filter === 'done') return 'No done todos yet.';
+    return 'Nothing to do yet.';
+  }
+
   // Apply the filter by hiding rows in place instead of re-rendering them. The
   // nodes stay put, so an in-progress edit, its unsaved text and the focus in the
   // search box all survive every keypress.
   function applyFilter() {
     var searching = searchTerm() !== '';
+    var filtering = filter !== DEFAULT_FILTER;
     var shown = 0;
     var lastShown = null;
     var items = list.children;
@@ -198,7 +255,7 @@
     for (var i = 0; i < items.length; i++) {
       var item = items[i];
       var todo = find(item.dataset.id);
-      var visible = todo !== null && matchesQuery(todo);
+      var visible = todo !== null && matchesView(todo);
       item.hidden = !visible;
       if (visible) {
         shown++;
@@ -211,9 +268,7 @@
       items[j].classList.toggle('is-last', items[j] === lastShown);
     }
 
-    emptyState.textContent = searching
-      ? 'No todos match "' + query.trim() + '".'
-      : 'Nothing to do yet.';
+    emptyState.textContent = emptyMessage();
     emptyState.hidden = shown > 0;
 
     var remaining = todos.filter(function (todo) {
@@ -221,7 +276,7 @@
     }).length;
     if (todos.length === 0) {
       countEl.textContent = '';
-    } else if (searching) {
+    } else if (searching || filtering) {
       countEl.textContent =
         'Showing ' + shown + ' of ' + todos.length + ' · ' + remaining + ' of ' + todos.length + ' left';
     } else {
@@ -412,7 +467,11 @@
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     var added = addTodo(input.value);
-    // Don't let a new todo vanish into an active filter the user forgot about.
+    // Don't let a new todo vanish into an active filter the user forgot about:
+    // a new todo is never done, so the Done filter has to step aside.
+    if (added && !matchesFilter(added)) {
+      setFilter(DEFAULT_FILTER);
+    }
     if (added && !matchesQuery(added)) {
       searchInput.value = '';
       setQuery('');
@@ -447,7 +506,15 @@
     setSort(sortSelect.value);
   });
 
+  // One listener for the whole group; the pressed state is the source of truth.
+  for (var b = 0; b < filterButtons.length; b++) {
+    filterButtons[b].addEventListener('click', function (event) {
+      setFilter(event.currentTarget.dataset.filter);
+    });
+  }
+
   // Reflect the stored sort mode in the select before the first render.
   sortSelect.value = sort;
+  syncFilterButtons();
   render();
 })();
